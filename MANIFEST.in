@@ -3,3 +3,4 @@ include LICENSE
 include pyproject.toml
 recursive-include examples *.py
 recursive-include tests *.py
+recursive-include document *.md

@@ -199,31 +199,29 @@ async def batch_process(items: dict):
     }
 
 # ============================================================================
-# Startup Event
+# Startup prints
 # ============================================================================
 
-@app.on_event("startup")
-async def startup_event():
-    print("🚀 FastAPI Payload Shield Example Started")
-    print("📝 Using Decorators:")
-    print("  PayloadShieldEnc('base64')       - Encrypt response only")
-    print("  PayloadShieldDec('base64')       - Decrypt request only")
-    print("  PayloadShield('base64')          - Both encrypt & decrypt")
-    print("\n📝 Endpoints:")
-    print("  GET  /api/public/users           - Get all users (encrypted response)")
-    print("  GET  /api/public/users/{id}      - Get single user (encrypted response)")
-    print("  POST /api/login                  - Login (encrypted request)")
-    print("  POST /api/validate-email         - Validate email (encrypted request)")
-    print("  POST /api/update-user/{id}       - Update user (encrypted request/response)")
-    print("  POST /api/create-post            - Create post (encrypted request/response)")
-    print("  POST /api/secure-process         - Secure process (encrypted request/response)")
-    print("  POST /api/batch-process          - Batch process (encrypted request/response)")
-    print("  GET  /health                     - Health check (no encryption)")
-    print("\n💡 To use a different encryption type, pass it to the decorator:")
-    print("  @PayloadShieldEnc('aes')         - AES encryption (when registered)")
-    print("  @PayloadShieldEnc('fernet')      - Fernet encryption (when registered)")
-    print("\n📚 Swagger UI: http://localhost:8000/docs")
-    print("📖 ReDoc: http://localhost:8000/redoc")
+print("🚀 FastAPI Payload Shield Example Started")
+print("📝 Using Decorators:")
+print("  PayloadShieldEnc('base64')       - Encrypt response only")
+print("  PayloadShieldDec('base64')       - Decrypt request only")
+print("  PayloadShield('base64')          - Both encrypt & decrypt")
+print("\n📝 Endpoints:")
+print("  GET  /api/public/users           - Get all users (encrypted response)")
+print("  GET  /api/public/users/{id}      - Get single user (encrypted response)")
+print("  POST /api/login                  - Login (encrypted request)")
+print("  POST /api/validate-email         - Validate email (encrypted request)")
+print("  POST /api/update-user/{id}       - Update user (encrypted request/response)")
+print("  POST /api/create-post            - Create post (encrypted request/response)")
+print("  POST /api/secure-process         - Secure process (encrypted request/response)")
+print("  POST /api/batch-process          - Batch process (encrypted request/response)")
+print("  GET  /health                     - Health check (no encryption)")
+print("\n💡 To use a different encryption type, pass it to the decorator:")
+print("  @PayloadShieldEnc('aes')         - AES encryption (when registered)")
+print("  @PayloadShieldEnc('fernet')      - Fernet encryption (when registered)")
+print("\n📚 Swagger UI: http://localhost:8000/docs")
+print("📖 ReDoc: http://localhost:8000/redoc")
 
 
 if __name__ == "__main__":
