@@ -1,22 +1,18 @@
-# FastAPI Base64 Crypto
+# FastAPI Payload Shield
 
-A lightweight Python package that provides decorators for automatic base64 encryption/decryption of request and response payloads in FastAPI applications. No route changes required!
+Lightweight FastAPI decorators for automatic encryption/decryption of request and response payloads. **Supports pluggable encryption handlers** - easily add new encryption types like AES, Fernet, or custom algorithms!
 
-## Features
+## 🎯 Key Features
 
-- 🔒 **Automatic Encryption**: Encrypt responses with a single decorator
-- 🔓 **Automatic Decryption**: Decrypt requests with a single decorator
+- 🔒 **Flexible Encryption**: Multiple encryption types (base64, AES, Fernet, custom)
+- 🔓 **Automatic Decryption**: Decrypt incoming requests automatically
 - 📝 **JSON-Friendly**: Works seamlessly with JSON requests and responses
 - 🎯 **Route-Agnostic**: No changes needed to your existing route logic
 - ⚡ **Lightweight**: Minimal dependencies and overhead
 - 🚀 **Easy Integration**: Just add decorators to your routes
+- 🧩 **Pluggable**: Create custom encryption handlers easily
 
 ## Installation
-
-### From PyPI (once published)
-```bash
-pip install fastapi-base64-crypto
-```
 
 ### From Local Development
 ```bash
@@ -24,195 +20,158 @@ cd FastAPIPS
 pip install -e .
 ```
 
+### From PyPI (when published)
+```bash
+pip install fastapi-payload-shield
+```
+
 ## Quick Start
 
-### Basic Usage
+### Basic Usage with Base64
 
 ```python
 from fastapi import FastAPI
-from fastapi_base64_crypto import encrypt_response, decrypt_request
+from fastapi_base64_crypto import PayloadShieldEnc, PayloadShieldDec, PayloadShield
 
 app = FastAPI()
 
 # Encrypt response only
 @app.get("/api/data")
-@encrypt_response
+@PayloadShieldEnc("base64")
 async def get_data():
     return {"message": "hello", "data": "world"}
 
 # Decrypt request only
 @app.post("/api/process")
-@decrypt_request
+@PayloadShieldDec("base64")
 async def process_data(data: dict):
-    # data is automatically decrypted from base64
     return {"received": data, "status": "success"}
 
-# Both decrypt request and encrypt response
 @app.post("/api/secure")
-@encrypt_response
-@decrypt_request
-async def secure_endpoint(data: dict):
-    # Automatically handles both encryption and decryption
-    return {"processed": data}
-```
-
-## API Reference
-
-### `@encrypt_response`
-
-Automatically encrypts the response payload with base64 encoding.
-
-**Example:**
-```python
-@app.get("/api/endpoint")
-@encrypt_response
-async def my_endpoint():
-    return {"key": "value"}
-
-# Response sent to client:
-# {
-#   "encrypted": "eyJrZXkiOiAidmFsdWUifQ=="
-# }
-```
-
-### `@decrypt_request`
-
-Automatically decrypts the request payload from base64 encoding.
-
-**Request format:**
-```json
-{
-  "encrypted": "eyJkYXRhIjogInZhbHVlIn0="
-}
-```
-
-**Example:**
-```python
-@app.post("/api/endpoint")
-@decrypt_request
-async def my_endpoint(data: dict):
-    # data is automatically decoded
-    return {"received": data}
-```
-
-### `@crypto_middleware`
-
-Combined decorator that applies both encryption and decryption.
-
-**Example:**
-```python
-@app.post("/api/secure")
-@crypto_middleware
+@PayloadShield("base64")
 async def secure_endpoint(data: dict):
     return {"processed": data}
+```
+
+## Decorators
+
+### `@PayloadShieldEnc(encryption_type)`
+
+Encrypts the response payload.
+
+```python
+@app.get("/api/users")
+@PayloadShieldEnc("base64")
+async def get_users():
+    return [{"id": 1, "name": "Alice"}]
+
+# Response: {"encrypted": "W3siaWQiOiAxLCAibmFtZSI6ICJBbGljZSJ9XQ=="}
+```
+
+### `@PayloadShieldDec(encryption_type)`
+
+Decrypts the request payload.
+
+```python
+@app.post("/api/login")
+@PayloadShieldDec("base64")
+async def login(credentials: dict):
+    return {"status": "success"}
+
+# Expects: {"encrypted": "base64_encoded_json"}
+```
+
+### `@PayloadShield(encryption_type)`
+
+Combined encryption and decryption
+
+```python
+@app.post("/api/secure")
+@PayloadShield("base64")
+async def secure_endpoint(data: dict):
+    return {"processed": data}
+
+# Expects: {"encrypted": "encrypted_data"}
+# Returns: {"encrypted": "encrypted_data"}
+```
+
+## Advanced Example: Multiple Encryption Types
+
+```python
+from fastapi import FastAPI
+from fastapi_base64_crypto import PayloadShield, register_handler, EncryptionHandler
+from cryptography.fernet import Fernet
+import json
+
+app = FastAPI()
+
+# Create Fernet handler
+class FernetHandler(EncryptionHandler):
+    def __init__(self, key):
+        self.cipher = Fernet(key)
+    
+    def encode(self, data):
+        return self.cipher.encrypt(json.dumps(data).encode()).decode()
+    
+    def decode(self, encoded_data):
+        return json.loads(self.cipher.decrypt(encoded_data.encode()))
+
+# Register
+key = Fernet.generate_key()
+register_handler("fernet", FernetHandler(key))
+
+# Use different encryption for different endpoints
+@app.post("/api/public")
+@PayloadShield("base64")  # Light encryption
+async def public_endpoint(data: dict):
+    return data
+
+@app.post("/api/private")
+@PayloadShield("fernet")  # Strong encryption
+async def private_endpoint(data: dict):
+    return data
 ```
 
 ## How It Works
 
-### Request Decryption
-1. Client sends: `{"encrypted": "base64_encoded_json"}`
-2. Decorator decodes the base64 string
-3. Decorator parses JSON and passes to route function
-4. Route function receives normal JSON data
+### Request Decryption Flow
+1. Client sends: `{"encrypted": "encrypted_data"}`
+2. `@PayloadShieldDec` decorator intercepts
+3. Decrypts using specified handler
+4. Route receives: `{"key": "value"}` (normal dict)
 
-### Response Encryption
-1. Route function returns: `{"key": "value"}`
-2. Decorator encodes the response as JSON string
-3. Decorator base64 encodes the JSON string
-4. Response sent as: `{"encrypted": "base64_string"}`
+### Response Encryption Flow
+1. Route returns: `{"key": "value"}`
+2. `@PayloadShieldEnc` decorator intercepts
+3. Encrypts using specified handler
+4. Client receives: `{"encrypted": "encrypted_data"}`
 
-## Example Usage
+## Testing
 
-### Setup
-
-```python
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_base64_crypto import encrypt_response, decrypt_request, crypto_middleware
-import uvicorn
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Example 1: GET with response encryption
-@app.get("/api/users/{user_id}")
-@encrypt_response
-async def get_user(user_id: int):
-    return {
-        "id": user_id,
-        "name": "John Doe",
-        "email": "john@example.com"
-    }
-
-# Example 2: POST with request decryption
-@app.post("/api/login")
-@decrypt_request
-async def login(credentials: dict):
-    username = credentials.get("username")
-    password = credentials.get("password")
-    
-    if username == "admin" and password == "secret":
-        return {"status": "success", "token": "abc123"}
-    return {"status": "failed", "message": "Invalid credentials"}
-
-# Example 3: PUT with both encryption and decryption
-@app.put("/api/users/{user_id}")
-@encrypt_response
-@decrypt_request
-async def update_user(user_id: int, data: dict):
-    updated_data = {
-        "id": user_id,
-        "name": data.get("name"),
-        "email": data.get("email"),
-        "status": "updated"
-    }
-    return updated_data
-
-# Example 4: Using combined middleware
-@app.post("/api/secure-process")
-@crypto_middleware
-async def secure_process(data: dict):
-    processed = {
-        "original": data,
-        "processed": True,
-        "timestamp": "2024-01-01T00:00:00Z"
-    }
-    return processed
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+### Run Example Application
+```bash
+python examples/example_app.py
 ```
 
-### Testing with cURL
+### Run Test Client
+```bash
+python examples/test_client.py
+```
+
+### Manual Test with cURL
 
 ```bash
-# Encrypt a payload first
-echo '{"username": "admin", "password": "secret"}' | base64
+# Encrypt test data
+echo '{"username":"admin"}' | base64
+# eyJ1c2VybmFtZSI6ImFkbWluIn0=
 
-# Expected output (your base64): eyJ1c2VybmFtZSI6ICJhZG1pbiIsICJwYXNzd29yZCI6ICJzZWNyZXQifQ==
-
-# Send POST request with encrypted payload
-curl -X POST "http://localhost:8000/api/login" \
+# Send encrypted request
+curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
-  -d '{"encrypted": "eyJ1c2VybmFtZSI6ICJhZG1pbiIsICJwYXNzd29yZCI6ICJzZWNyZXQifQ=="}'
-
-# Response will be encrypted
-# {"encrypted": "eyJzdGF0dXMiOiAic3VjY2VzcyIsICJ0b2tlbiI6ICJhYmMxMjMifQ=="}
-
-# Decode response
-echo "eyJzdGF0dXMiOiAic3VjY2VzcyIsICJ0b2tlbiI6ICJhYmMxMjMifQ==" | base64 -d
-# {"status": "success", "token": "abc123"}
+  -d '{"encrypted":"eyJ1c2VybmFtZSI6ImFkbWluIn0="}'
 ```
 
 ### Testing with Python
-
 ```python
 import requests
 import json
@@ -236,29 +195,76 @@ print(decrypted)
 # {'status': 'success', 'token': 'abc123'}
 ```
 
+## Creating Custom Encryption Handlers
+
+See [CUSTOM_HANDLERS.md](CUSTOM_HANDLERS.md) for detailed guide on:
+
+- Creating custom handlers
+- Fernet encryption example
+- AES encryption example
+- Best practices
+- Performance tips
+- Security considerations
+
+## Backward Compatibility
+
+Old decorator names still work:
+
+```python
+from fastapi_base64_crypto import encrypt_response, decrypt_request, crypto_middleware
+
+# These are equivalent to:
+# PayloadShieldEnc("base64")
+# PayloadShieldDec("base64")
+# PayloadShield("base64")
+
+@app.get("/api/data")
+@encrypt_response
+async def get_data():
+    return {"data": "value"}
+```
+
+## API Reference
+
+### Decorators
+
+| Decorator | Purpose |
+|-----------|---------|
+| `PayloadShieldEnc(type)` | Encrypt response |
+| `PayloadShieldDec(type)` | Decrypt request |
+| `PayloadShield(type)` | Both encrypt & decrypt |
+
+### Functions
+
+| Function | Purpose |
+|----------|---------|
+| `register_handler(name, handler)` | Register custom encryption handler |
+| `get_handler(name)` | Get handler by name |
+| `EncryptionHandler` | Base class for handlers |
+
+### Built-in Handlers
+
+| Handler | Type | Security | Use Case |
+|---------|------|----------|----------|
+| `base64` | Encoding | None | Obfuscation, development |
+
 ## Error Handling
 
 The decorators include built-in error handling:
 
 ```python
-# If decryption fails
+# Invalid encrypted data
 # Response: {"error": "Failed to decrypt request: ..."}
 
-# If encryption fails
-# Response: {"error": "Failed to encrypt response: ..."}
+# Missing encryption handler  
+# Response: ValueError: Encryption handler 'xyz' not found. Available: base64, fernet
 ```
 
-## Decorator Order
+## Performance Considerations
 
-When using both decorators, apply `@decrypt_request` before `@encrypt_response`:
-
-```python
-@app.post("/api/endpoint")
-@encrypt_response      # Applied second
-@decrypt_request       # Applied first
-async def endpoint(data: dict):
-    return {"result": data}
-```
+- **Caching**: Handler instances are cached
+- **Compression**: Consider compressing before encryption for large payloads
+- **Async**: All operations are async-friendly
 
 ## Requirements
 
@@ -266,18 +272,56 @@ async def endpoint(data: dict):
 - FastAPI 0.68+
 - Starlette 0.19+
 
+## Files Included
+
+- `fastapi_base64_crypto/` - Main package
+  - `__init__.py` - Exports decorators and handlers
+  - `crypto.py` - Encryption handlers
+  - `decorators.py` - FastAPI decorators
+- `examples/` - Working examples
+  - `example_app.py` - Full-featured demo
+  - `test_client.py` - Test/client script
+- `README.md` - This file
+- `QUICKSTART.md` - Quick start guide
+- `CUSTOM_HANDLERS.md` - Creating custom handlers
+- `DEVELOPMENT.md` - Development guide
+
 ## License
 
-MIT License - see LICENSE file for details
+MIT License - See LICENSE file for details
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome! Areas for contribution:
+
+1. New encryption handlers (AES, Fernet, etc.)
+2. Performance optimizations
+3. Documentation improvements
+4. Test coverage
+5. Examples
 
 ## Support
 
-For issues, questions, or suggestions, please open an issue on GitHub.
+- 📖 Full guide: [README.md](README.md)
+- ⚡ Quick start: [QUICKSTART.md](QUICKSTART.md)
+- 🧩 Custom handlers: [CUSTOM_HANDLERS.md](CUSTOM_HANDLERS.md)
+- 🛠️ Development: [DEVELOPMENT.md](DEVELOPMENT.md)
 
 ---
 
-**Note**: This package is designed for simple base64 encryption/decryption. For production-grade encryption, consider using cryptographic libraries like `cryptography` or `PyCryptodome` for AES encryption instead.
+**Happy encrypting!** 🔒
+
+## Why Payload Shield?
+
+This package was designed with extensibility in mind. Unlike static encryption libraries, Payload Shield lets you:
+
+- Mix and match encryption types in the same app
+- Add new encryption types without touching core code
+- Keep route logic clean and simple
+- Support multiple security levels
+
+Perfect for:
+- Building multi-tier security APIs
+- Migrating from one encryption to another
+- Testing different encryption strategies
+- Production systems requiring flexible crypto

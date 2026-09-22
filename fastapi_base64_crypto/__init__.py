@@ -1,11 +1,43 @@
 """
-FastAPI Base64 Crypto Package
-Provides decorators for automatic base64 encryption/decryption of request/response payloads
+FastAPI Payload Shield Package
+Provides decorators for automatic encryption/decryption of request/response payloads
+with pluggable encryption handlers (base64, AES, Fernet, etc.)
 """
 
-from .decorators import encrypt_response, decrypt_request
+# Decorators
+from .decorators import (
+    PayloadShieldEnc,
+    PayloadShieldDec,
+    PayloadShield,
+    # Backward compatibility
+    encrypt_response,
+    decrypt_request,
+    crypto_middleware,
+)
 
-__version__ = "1.0.0"
-__author__ = "Your Name"
+# Encryption handlers and utilities
+from .crypto import (
+    EncryptionHandler,
+    Base64EncryptionHandler,
+    register_handler,
+    get_handler,
+)
 
-__all__ = ["encrypt_response", "decrypt_request"]
+__version__ = "2.0.0"
+__author__ = "Ganesh Kandu"
+
+__all__ = [
+    # New decorator names
+    "PayloadShieldEnc",
+    "PayloadShieldDec",
+    "PayloadShield",
+    # Backward compatibility
+    "encrypt_response",
+    "decrypt_request",
+    "crypto_middleware",
+    # Encryption handlers
+    "EncryptionHandler",
+    "Base64EncryptionHandler",
+    "register_handler",
+    "get_handler",
+]

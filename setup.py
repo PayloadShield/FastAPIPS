@@ -10,12 +10,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="fastapi-base64-crypto",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Ganesh Kandu",
+    author_email="kanduganesh@gmail.com",
     description="FastAPI decorators for automatic base64 encryption/decryption of request/response payloads",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/fastapi-base64-crypto",
+    url="https://github.com/PayloadShield/FastAPIPS",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

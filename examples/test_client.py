@@ -1,5 +1,5 @@
 """
-Client script to test the FastAPI Base64 Crypto decorators
+Client script to test the FastAPI Payload Shield decorators
 This script demonstrates how to:
 1. Encrypt data before sending as request
 2. Decrypt data received as response

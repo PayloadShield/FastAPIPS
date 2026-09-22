@@ -1,13 +1,14 @@
 """
-Example FastAPI application using fastapi-base64-crypto decorators
+Example FastAPI application using FastAPI Payload Shield decorators
+Demonstrates PayloadShieldEnc, PayloadShieldDec, and PayloadShield decorators
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_base64_crypto import encrypt_response, decrypt_request, crypto_middleware
+from fastapi_base64_crypto import PayloadShieldEnc, PayloadShieldDec, PayloadShield
 import uvicorn
 
-app = FastAPI(title="FastAPI Base64 Crypto Example")
+app = FastAPI(title="FastAPI Payload Shield Example")
 
 # Add CORS middleware for client testing
 app.add_middleware(
@@ -19,11 +20,11 @@ app.add_middleware(
 )
 
 # ============================================================================
-# Example 1: Response Encryption Only
+# Example 1: Response Encryption Only - PayloadShieldEnc
 # ============================================================================
 
 @app.get("/api/public/users")
-@encrypt_response
+@PayloadShieldEnc("base64")
 async def get_users():
     """
     Returns list of users with encrypted response.
@@ -37,7 +38,7 @@ async def get_users():
 
 
 @app.get("/api/public/users/{user_id}")
-@encrypt_response
+@PayloadShieldEnc("base64")
 async def get_user(user_id: int):
     """
     Returns single user with encrypted response.
@@ -51,11 +52,11 @@ async def get_user(user_id: int):
 
 
 # ============================================================================
-# Example 2: Request Decryption Only
+# Example 2: Request Decryption Only - PayloadShieldDec
 # ============================================================================
 
 @app.post("/api/login")
-@decrypt_request
+@PayloadShieldDec("base64")
 async def login(credentials: dict):
     """
     Expects encrypted request: {"encrypted": "base64_json_with_username_password"}
@@ -80,7 +81,7 @@ async def login(credentials: dict):
 
 
 @app.post("/api/validate-email")
-@decrypt_request
+@PayloadShieldDec("base64")
 async def validate_email(data: dict):
     """
     Expects encrypted request with email address.
@@ -97,12 +98,11 @@ async def validate_email(data: dict):
 
 
 # ============================================================================
-# Example 3: Both Request Decryption and Response Encryption
+# Example 3: Both Request Decryption and Response Encryption - PayloadShield
 # ============================================================================
 
 @app.post("/api/update-user/{user_id}")
-@encrypt_response
-@decrypt_request
+@PayloadShield("base64")
 async def update_user(user_id: int, data: dict):
     """
     Expects encrypted request with user updates.
@@ -119,8 +119,7 @@ async def update_user(user_id: int, data: dict):
 
 
 @app.post("/api/create-post")
-@encrypt_response
-@decrypt_request
+@PayloadShield("base64")
 async def create_post(post_data: dict):
     """
     Expects encrypted request with post content.
@@ -138,14 +137,14 @@ async def create_post(post_data: dict):
 
 
 # ============================================================================
-# Example 4: Using Combined Middleware Decorator
+# Example 4: Using PayloadShield Combined Decorator
 # ============================================================================
 
 @app.post("/api/secure-process")
-@crypto_middleware
+@PayloadShield("base64")
 async def secure_process(data: dict):
     """
-    Uses @crypto_middleware for both encryption and decryption in one decorator.
+    Uses @PayloadShield("base64") for both encryption and decryption in one decorator.
     Expects: {"encrypted": "base64_json"}
     Returns: {"encrypted": "base64_json"}
     """
@@ -176,8 +175,7 @@ async def health_check():
 # ============================================================================
 
 @app.post("/api/batch-process")
-@encrypt_response
-@decrypt_request
+@PayloadShield("base64")
 async def batch_process(items: dict):
     """
     Process batch items with both request and response encryption.
@@ -200,15 +198,18 @@ async def batch_process(items: dict):
         "status": "completed"
     }
 
-
 # ============================================================================
 # Startup Event
 # ============================================================================
 
 @app.on_event("startup")
 async def startup_event():
-    print("🚀 FastAPI Base64 Crypto Example Started")
-    print("📝 Endpoints:")
+    print("🚀 FastAPI Payload Shield Example Started")
+    print("📝 Using Decorators:")
+    print("  PayloadShieldEnc('base64')       - Encrypt response only")
+    print("  PayloadShieldDec('base64')       - Decrypt request only")
+    print("  PayloadShield('base64')          - Both encrypt & decrypt")
+    print("\n📝 Endpoints:")
     print("  GET  /api/public/users           - Get all users (encrypted response)")
     print("  GET  /api/public/users/{id}      - Get single user (encrypted response)")
     print("  POST /api/login                  - Login (encrypted request)")
@@ -218,6 +219,9 @@ async def startup_event():
     print("  POST /api/secure-process         - Secure process (encrypted request/response)")
     print("  POST /api/batch-process          - Batch process (encrypted request/response)")
     print("  GET  /health                     - Health check (no encryption)")
+    print("\n💡 To use a different encryption type, pass it to the decorator:")
+    print("  @PayloadShieldEnc('aes')         - AES encryption (when registered)")
+    print("  @PayloadShieldEnc('fernet')      - Fernet encryption (when registered)")
     print("\n📚 Swagger UI: http://localhost:8000/docs")
     print("📖 ReDoc: http://localhost:8000/redoc")
 
