@@ -42,12 +42,12 @@ The publish script automatically:
 ## 📋 Package Details
 
 ```
-Name: fastapi-base64-crypto
+Name: fastapi-shield
 Version: 1.0.0
 License: Apache-2.0
 Author: Ganesh Kandu
 Repository: https://github.com/PayloadShield/FastAPIPS
-PyPI: https://pypi.org/project/fastapi-base64-crypto/
+PyPI: https://pypi.org/project/fastapi-shield/
 ```
 
 ---
@@ -71,7 +71,7 @@ Password: [Your API token from https://pypi.org/account/manage]
 ## 📂 What's Included in Distribution
 
 ```
-fastapi-base64-crypto/
+fastapi-shield/
 ├── fastapi_base64_crypto/
 │   ├── __init__.py
 │   ├── crypto.py
@@ -126,13 +126,13 @@ cat LICENSE | head -5
 Once published, users can install with:
 
 ```bash
-pip install fastapi-base64-crypto
+pip install fastapi-shield
 ```
 
 Or with optional dev tools:
 
 ```bash
-pip install fastapi-base64-crypto[dev]
+pip install fastapi-shield[dev]
 ```
 
 ---
@@ -200,7 +200,7 @@ To publish updates:
 ## 📞 Support
 
 - **GitHub Issues**: https://github.com/PayloadShield/FastAPIPS/issues
-- **PyPI Page**: https://pypi.org/project/fastapi-base64-crypto/
+- **PyPI Page**: https://pypi.org/project/fastapi-shield/
 - **Author**: Ganesh Kandu <kanduganesh@gmail.com>
 
 ---
@@ -209,8 +209,8 @@ To publish updates:
 
 Once published to PyPI:
 
-1. ✅ Available for download: `pip install fastapi-base64-crypto`
-2. ✅ Listed on PyPI: https://pypi.org/project/fastapi-base64-crypto/
+1. ✅ Available for download: `pip install fastapi-shield`
+2. ✅ Listed on PyPI: https://pypi.org/project/fastapi-shield/
 3. ✅ Discoverable via: `pip search` (if enabled)
 4. ✅ Accessible from: conda-forge (optional)
 5. ✅ Linked to: GitHub repository

@@ -174,14 +174,14 @@ Licensed under the Apache License, Version 2.0
 
 | Field | Value |
 |-------|-------|
-| Name | fastapi-base64-crypto |
+| Name | fastapi-shield |
 | Version | 1.0.0 |
 | License | Apache-2.0 |
 | Author | Ganesh Kandu |
 | Email | kanduganesh@gmail.com |
 | Repository | https://github.com/PayloadShield/FastAPIPS |
 | Issues | https://github.com/PayloadShield/FastAPIPS/issues |
-| PyPI URL | https://pypi.org/project/fastapi-base64-crypto/ |
+| PyPI URL | https://pypi.org/project/fastapi-shield/ |
 
 ---
 
@@ -272,7 +272,7 @@ publish.batch
 
 ### After Publishing
 1. ✅ Package available on PyPI
-2. ✅ Installable via: `pip install fastapi-base64-crypto`
+2. ✅ Installable via: `pip install fastapi-shield`
 3. ✅ Users can access documentation
 4. ✅ GitHub link visible on PyPI
 
@@ -308,8 +308,8 @@ Issues: https://github.com/PayloadShield/FastAPIPS/issues
 
 **PyPI Integration:**
 ```
-Package: fastapi-base64-crypto
-URL: https://pypi.org/project/fastapi-base64-crypto/
+Package: fastapi-shield
+URL: https://pypi.org/project/fastapi-shield/
 Source: GitHub (PayloadShield/FastAPIPS)
 License: Apache-2.0
 ```

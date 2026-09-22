@@ -167,7 +167,7 @@ async def health_check():
     """
     Simple health check endpoint without encryption.
     """
-    return {"status": "healthy", "service": "fastapi-base64-crypto-example"}
+    return {"status": "healthy", "service": "fastapi-shield-example"}
 
 
 # ============================================================================

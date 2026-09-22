@@ -1,5 +1,5 @@
 """
-Setup configuration for fastapi-base64-crypto package
+Setup configuration for fastapi-shield package
 """
 
 from setuptools import setup, find_packages
@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="fastapi-base64-crypto",
+    name="fastapi-shield",
     version="1.0.0",
     author="Ganesh Kandu",
     author_email="kanduganesh@gmail.com",

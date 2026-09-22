@@ -2,7 +2,7 @@
 
 ## ✅ Package Created Successfully!
 
-Your pip package **fastapi-base64-crypto** has been created and is ready to use!
+Your pip package **fastapi-shield** has been created and is ready to use!
 
 ---
 
@@ -234,7 +234,7 @@ pip install -r requirements.txt
 
 ### Method 4: Production Installation (When Published to PyPI)
 ```bash
-pip install fastapi-base64-crypto
+pip install fastapi-shield
 ```
 
 ---

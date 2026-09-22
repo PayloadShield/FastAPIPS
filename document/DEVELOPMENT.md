@@ -219,10 +219,10 @@ pip install -r requirements.txt
 python -c "import fastapi_base64_crypto; print(fastapi_base64_crypto.__version__)"
 
 # View package info
-pip show fastapi-base64-crypto
+pip show fastapi-shield
 
 # Uninstall package
-pip uninstall fastapi-base64-crypto
+pip uninstall fastapi-shield
 
 # Clean build artifacts
 rm -rf build/ dist/ *.egg-info

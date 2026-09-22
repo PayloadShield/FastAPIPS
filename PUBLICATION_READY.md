@@ -127,7 +127,7 @@ chmod +x publish.sh
 # Password: Your PyPI password (or API token for 2FA)
 
 # After successful publish:
-# Install with: pip install fastapi-base64-crypto
+# Install with: pip install fastapi-shield
 ```
 
 ---
@@ -158,7 +158,7 @@ The publish scripts are configured with:
 - **Issue Tracker**: https://github.com/PayloadShield/FastAPIPS/issues
 
 When published to PyPI, users will see:
-- Project URL: https://pypi.org/project/fastapi-base64-crypto/
+- Project URL: https://pypi.org/project/fastapi-shield/
 - GitHub Link: https://github.com/PayloadShield/FastAPIPS
 - Issue Reports: https://github.com/PayloadShield/FastAPIPS/issues
 
@@ -168,7 +168,7 @@ When published to PyPI, users will see:
 
 | Field | Value |
 |-------|-------|
-| Package Name | fastapi-base64-crypto |
+| Package Name | fastapi-shield |
 | Version | 1.0.0 |
 | License | Apache-2.0 |
 | Author | Ganesh Kandu |

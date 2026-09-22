@@ -1,5 +1,5 @@
 """
-Examples package for fastapi-base64-crypto
+Examples package for fastapi-shield
 """
 
 __version__ = "1.0.0"
