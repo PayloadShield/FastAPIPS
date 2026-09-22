@@ -1,0 +1,17 @@
+# Core dependencies
+fastapi>=0.68.0
+starlette>=0.19.0
+uvicorn>=0.15.0
+
+# For running examples
+requests>=2.26.0
+
+# Development dependencies
+pytest>=6.0
+pytest-asyncio>=0.18.0
+httpx>=0.19.0  # For testing async endpoints
+
+# Optional tools
+black>=21.0  # Code formatting
+flake8>=3.9  # Linting
+mypy>=0.910  # Type checking
