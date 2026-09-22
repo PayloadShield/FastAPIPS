@@ -5,7 +5,7 @@ Demonstrates PayloadShieldEnc, PayloadShieldDec, and PayloadShield decorators
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_shield import PayloadShieldEnc, PayloadShieldDec, PayloadShield
+from fastapi_payloadshield import PayloadShieldEnc, PayloadShieldDec, PayloadShield
 import uvicorn
 
 app = FastAPI(title="FastAPI Payload Shield Example")
@@ -167,7 +167,7 @@ async def health_check():
     """
     Simple health check endpoint without encryption.
     """
-    return {"status": "healthy", "service": "fastapi-shield-example"}
+    return {"status": "healthy", "service": "fastapi_payloadshield-example"}
 
 
 # ============================================================================
