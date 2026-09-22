@@ -97,7 +97,7 @@ FastAPIPS/
 │   ├── QUICK_REFERENCE.md                ← API reference
 │   └── REFACTORING_SUMMARY.md            ← Migration guide
 │
-├── 📁 fastapi_shield/             ← Package source
+├── 📁 fastapi_payloadshield/             ← Package source
 │   ├── __init__.py
 │   ├── crypto.py
 │   └── decorators.py
@@ -174,14 +174,14 @@ Licensed under the Apache License, Version 2.0
 
 | Field | Value |
 |-------|-------|
-| Name | fastapi-shield |
+| Name | fastapi_payloadshield |
 | Version | 1.0.0 |
 | License | Apache-2.0 |
 | Author | Ganesh Kandu |
 | Email | kanduganesh@gmail.com |
 | Repository | https://github.com/PayloadShield/FastAPIPS |
 | Issues | https://github.com/PayloadShield/FastAPIPS/issues |
-| PyPI URL | https://pypi.org/project/fastapi-shield/ |
+| PyPI URL | https://pypi.org/project/fastapi_payloadshield/ |
 
 ---
 
@@ -272,7 +272,7 @@ publish.batch
 
 ### After Publishing
 1. ✅ Package available on PyPI
-2. ✅ Installable via: `pip install fastapi-shield`
+2. ✅ Installable via: `pip install fastapi_payloadshield`
 3. ✅ Users can access documentation
 4. ✅ GitHub link visible on PyPI
 
@@ -308,8 +308,8 @@ Issues: https://github.com/PayloadShield/FastAPIPS/issues
 
 **PyPI Integration:**
 ```
-Package: fastapi-shield
-URL: https://pypi.org/project/fastapi-shield/
+Package: fastapi_payloadshield
+URL: https://pypi.org/project/fastapi_payloadshield/
 Source: GitHub (PayloadShield/FastAPIPS)
 License: Apache-2.0
 ```

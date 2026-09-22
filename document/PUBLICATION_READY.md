@@ -78,7 +78,7 @@ FastAPIPS/
 │   ├── QUICK_REFERENCE.md
 │   └── REFACTORING_SUMMARY.md
 │
-├── fastapi_shield/
+├── fastapi_payloadshield/
 │   ├── __init__.py
 │   ├── crypto.py
 │   └── decorators.py
@@ -127,7 +127,7 @@ chmod +x publish.sh
 # Password: Your PyPI password (or API token for 2FA)
 
 # After successful publish:
-# Install with: pip install fastapi-shield
+# Install with: pip install fastapi_payloadshield
 ```
 
 ---
@@ -158,7 +158,7 @@ The publish scripts are configured with:
 - **Issue Tracker**: https://github.com/PayloadShield/FastAPIPS/issues
 
 When published to PyPI, users will see:
-- Project URL: https://pypi.org/project/fastapi-shield/
+- Project URL: https://pypi.org/project/fastapi_payloadshield/
 - GitHub Link: https://github.com/PayloadShield/FastAPIPS
 - Issue Reports: https://github.com/PayloadShield/FastAPIPS/issues
 
@@ -168,7 +168,7 @@ When published to PyPI, users will see:
 
 | Field | Value |
 |-------|-------|
-| Package Name | fastapi-shield |
+| Package Name | fastapi_payloadshield |
 | Version | 1.0.0 |
 | License | Apache-2.0 |
 | Author | Ganesh Kandu |
@@ -254,7 +254,7 @@ python examples/example_app.py
 python examples/test_client.py
 
 # Verify imports
-python -c "from fastapi_shield import PayloadShield; print('✅ Import successful')"
+python -c "from fastapi_payloadshield import PayloadShield; print('✅ Import successful')"
 ```
 
 ---

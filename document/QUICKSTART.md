@@ -26,7 +26,7 @@ Create a file named `main.py`:
 
 ```python
 from fastapi import FastAPI
-from fastapi_shield import encrypt_response, decrypt_request
+from fastapi_payloadshield import encrypt_response, decrypt_request
 
 app = FastAPI()
 
@@ -122,7 +122,7 @@ python examples/test_client.py
 
 ```
 FastAPIPS/
-├── fastapi_shield/       # Main package
+├── fastapi_payloadshield/       # Main package
 │   ├── __init__.py              # Package exports
 │   ├── crypto.py                # Encryption/decryption functions
 │   └── decorators.py            # Decorator implementations

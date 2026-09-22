@@ -2,7 +2,7 @@
 
 ## ✅ Package Created Successfully!
 
-Your pip package **fastapi-shield** has been created and is ready to use!
+Your pip package **fastapi_payloadshield** has been created and is ready to use!
 
 ---
 
@@ -10,7 +10,7 @@ Your pip package **fastapi-shield** has been created and is ready to use!
 
 A complete, production-ready Python package with:
 
-### Core Package (`fastapi_shield/`)
+### Core Package (`fastapi_payloadshield/`)
 1. **`__init__.py`** - Package initialization and exports
 2. **`crypto.py`** - Base64 encoding/decoding utilities
 3. **`decorators.py`** - FastAPI decorators for encryption/decryption
@@ -45,7 +45,7 @@ pip install -e .
 ### 2. Use in Your FastAPI App
 ```python
 from fastapi import FastAPI
-from fastapi_shield import encrypt_response, decrypt_request
+from fastapi_payloadshield import encrypt_response, decrypt_request
 
 app = FastAPI()
 
@@ -117,7 +117,7 @@ async def get_user(user_id: int):
 
 ```
 FastAPIPS/
-├── fastapi_shield/           ← Main package
+├── fastapi_payloadshield/           ← Main package
 │   ├── __init__.py
 │   ├── crypto.py                    ← Encoding/decoding functions
 │   └── decorators.py                ← Decorators (core feature)
@@ -234,7 +234,7 @@ pip install -r requirements.txt
 
 ### Method 4: Production Installation (When Published to PyPI)
 ```bash
-pip install fastapi-shield
+pip install fastapi_payloadshield
 ```
 
 ---

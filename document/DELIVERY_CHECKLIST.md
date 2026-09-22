@@ -3,9 +3,9 @@
 ## ✅ Completed Deliverables
 
 ### 🎯 Core Package (Production Ready)
-- [x] **fastapi_shield/crypto.py** - Handler implementations with ABC pattern
-- [x] **fastapi_shield/decorators.py** - Three new decorators (PayloadShieldEnc/Dec/Shield)
-- [x] **fastapi_shield/__init__.py** - Public API exports and backward compatibility
+- [x] **fastapi_payloadshield/crypto.py** - Handler implementations with ABC pattern
+- [x] **fastapi_payloadshield/decorators.py** - Three new decorators (PayloadShieldEnc/Dec/Shield)
+- [x] **fastapi_payloadshield/__init__.py** - Public API exports and backward compatibility
 
 ### 🏗️ Architecture (Extensible & Clean)
 - [x] **EncryptionHandler** - Abstract base class for all handlers
@@ -57,7 +57,7 @@ FastAPIPS/
 ├── DEVELOPMENT.md              ← Dev setup & contribution
 ├── PACKAGE_SUMMARY.md          ← Package description
 │
-├── fastapi_shield/
+├── fastapi_payloadshield/
 │   ├── __init__.py            ← Public API exports
 │   ├── crypto.py              ← Handler implementations
 │   └── decorators.py          ← FastAPI decorators
@@ -82,7 +82,7 @@ pip install -e .
 ### 2. Basic Usage
 ```python
 from fastapi import FastAPI
-from fastapi_shield import PayloadShield
+from fastapi_payloadshield import PayloadShield
 
 app = FastAPI()
 
@@ -94,7 +94,7 @@ async def endpoint(data: dict):
 
 ### 3. With Custom Encryption
 ```python
-from fastapi_shield import EncryptionHandler, register_handler, PayloadShield
+from fastapi_payloadshield import EncryptionHandler, register_handler, PayloadShield
 from cryptography.fernet import Fernet
 import json
 
@@ -163,7 +163,7 @@ register_handler("custom", CustomHandler())
 ### ✅ Backward Compatible
 ```python
 # Old code still works in v2.0.0
-from fastapi_shield import encrypt_response, decrypt_request, crypto_middleware
+from fastapi_payloadshield import encrypt_response, decrypt_request, crypto_middleware
 
 @app.post("/api/endpoint")
 @crypto_middleware
@@ -291,7 +291,7 @@ app.py with:
 
 ### Test 1: Import Verification
 ```bash
-python -c "from fastapi_shield import PayloadShield, EncryptionHandler, register_handler; print('✅ Imports work')"
+python -c "from fastapi_payloadshield import PayloadShield, EncryptionHandler, register_handler; print('✅ Imports work')"
 ```
 
 ### Test 2: Run Examples
@@ -304,7 +304,7 @@ python examples/test_client.py
 
 ### Test 3: Custom Handler
 ```python
-from fastapi_shield import EncryptionHandler, register_handler, PayloadShield
+from fastapi_payloadshield import EncryptionHandler, register_handler, PayloadShield
 import json
 
 class TestHandler(EncryptionHandler):
@@ -359,7 +359,7 @@ You now have a **production-ready, extensible, flexible encryption framework** f
 
 ### Ready to Use Immediately
 ```python
-from fastapi_shield import PayloadShield
+from fastapi_payloadshield import PayloadShield
 
 @app.post("/api/endpoint")
 @PayloadShield("base64")

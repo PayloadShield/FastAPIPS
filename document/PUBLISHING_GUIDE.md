@@ -42,12 +42,12 @@ The publish script automatically:
 ## 📋 Package Details
 
 ```
-Name: fastapi-shield
+Name: fastapi_payloadshield
 Version: 1.0.0
 License: Apache-2.0
 Author: Ganesh Kandu
 Repository: https://github.com/PayloadShield/FastAPIPS
-PyPI: https://pypi.org/project/fastapi-shield/
+PyPI: https://pypi.org/project/fastapi_payloadshield/
 ```
 
 ---
@@ -71,8 +71,8 @@ Password: [Your API token from https://pypi.org/account/manage]
 ## 📂 What's Included in Distribution
 
 ```
-fastapi-shield/
-├── fastapi_shield/
+fastapi_payloadshield/
+├── fastapi_payloadshield/
 │   ├── __init__.py
 │   ├── crypto.py
 │   └── decorators.py
@@ -107,10 +107,10 @@ Before running publish script:
 ls -la  # or dir on Windows
 
 # 2. Test imports
-python -c "from fastapi_shield import PayloadShield; print('✅ OK')"
+python -c "from fastapi_payloadshield import PayloadShield; print('✅ OK')"
 
 # 3. Check version
-python -c "import fastapi_shield; print(f'Version: {fastapi_shield.__version__}')"
+python -c "import fastapi_payloadshield; print(f'Version: {fastapi_payloadshield.__version__}')"
 
 # 4. Verify setup.py
 python setup.py --version
@@ -126,13 +126,13 @@ cat LICENSE | head -5
 Once published, users can install with:
 
 ```bash
-pip install fastapi-shield
+pip install fastapi_payloadshield
 ```
 
 Or with optional dev tools:
 
 ```bash
-pip install fastapi-shield[dev]
+pip install fastapi_payloadshield[dev]
 ```
 
 ---
@@ -200,7 +200,7 @@ To publish updates:
 ## 📞 Support
 
 - **GitHub Issues**: https://github.com/PayloadShield/FastAPIPS/issues
-- **PyPI Page**: https://pypi.org/project/fastapi-shield/
+- **PyPI Page**: https://pypi.org/project/fastapi_payloadshield/
 - **Author**: Ganesh Kandu <kanduganesh@gmail.com>
 
 ---
@@ -209,8 +209,8 @@ To publish updates:
 
 Once published to PyPI:
 
-1. ✅ Available for download: `pip install fastapi-shield`
-2. ✅ Listed on PyPI: https://pypi.org/project/fastapi-shield/
+1. ✅ Available for download: `pip install fastapi_payloadshield`
+2. ✅ Listed on PyPI: https://pypi.org/project/fastapi_payloadshield/
 3. ✅ Discoverable via: `pip search` (if enabled)
 4. ✅ Accessible from: conda-forge (optional)
 5. ✅ Linked to: GitHub repository

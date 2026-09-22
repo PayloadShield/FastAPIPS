@@ -71,11 +71,11 @@ if python -m twine upload dist/* --verbose; then
     echo "Success! Package published to PyPI"
     echo "========================================"
     echo ""
-    echo "Published at: https://pypi.org/project/fastapi-shield/"
+    echo "Published at: https://pypi.org/project/fastapi_payloadshield/"
     echo "GitHub Repository: https://github.com/PayloadShield/FastAPIPS"
     echo "Documentation: https://github.com/PayloadShield/FastAPIPS#readme"
     echo ""
-    echo "Install with: pip install fastapi-shield"
+    echo "Install with: pip install fastapi_payloadshield"
     echo ""
 else
     echo "Error: Upload to PyPI failed"
