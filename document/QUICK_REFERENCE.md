@@ -54,7 +54,7 @@ async def secure_endpoint(data: dict):
 
 ### Step 1: Create Handler Class
 ```python
-from fastapi_base64_crypto import EncryptionHandler
+from fastapi_shield import EncryptionHandler
 import json
 
 class MyHandler(EncryptionHandler):
@@ -71,7 +71,7 @@ class MyHandler(EncryptionHandler):
 
 ### Step 2: Register Handler
 ```python
-from fastapi_base64_crypto import register_handler
+from fastapi_shield import register_handler
 
 handler = MyHandler()
 register_handler("my-handler", handler)
@@ -91,7 +91,7 @@ async def endpoint(data: dict):
 
 ```python
 from fastapi import FastAPI
-from fastapi_base64_crypto import PayloadShield, EncryptionHandler, register_handler
+from fastapi_shield import PayloadShield, EncryptionHandler, register_handler
 from cryptography.fernet import Fernet
 import json
 
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 ## 🔄 Multiple Encryption Types in One App
 
 ```python
-from fastapi_base64_crypto import PayloadShield, register_handler
+from fastapi_shield import PayloadShield, register_handler
 
 # Register different handlers
 register_handler("base64", Base64Handler())
@@ -229,7 +229,7 @@ print(result)
 ## 🔐 Handler Implementation Template
 
 ```python
-from fastapi_base64_crypto import EncryptionHandler
+from fastapi_shield import EncryptionHandler
 import json
 from typing import Any
 
@@ -339,7 +339,7 @@ async def secure(data: dict):
 **"Encryption handler 'xyz' not found"**
 ```python
 # Register the handler first!
-from fastapi_base64_crypto import register_handler
+from fastapi_shield import register_handler
 register_handler("xyz", XYZHandler())
 ```
 

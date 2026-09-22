@@ -6,7 +6,7 @@ The FastAPI Payload Shield package has been refactored from a simple base64-only
 
 ### Old API (Deprecated but Still Works)
 ```python
-from fastapi_base64_crypto import encrypt_response, decrypt_request, crypto_middleware
+from fastapi_shield import encrypt_response, decrypt_request, crypto_middleware
 
 @app.get("/api/data")
 @encrypt_response
@@ -26,7 +26,7 @@ async def secure(data: dict):
 
 ### New API (Recommended)
 ```python
-from fastapi_base64_crypto import PayloadShieldEnc, PayloadShieldDec, PayloadShield
+from fastapi_shield import PayloadShieldEnc, PayloadShieldDec, PayloadShield
 
 @app.get("/api/data")
 @PayloadShieldEnc("base64")
@@ -58,7 +58,7 @@ async def secure(data: dict):
 
 ### 3. **Handler Registry**
 ```python
-from fastapi_base64_crypto import register_handler, get_handler
+from fastapi_shield import register_handler, get_handler
 
 # Register a custom handler
 register_handler("my-handler", MyEncryptionHandler())
@@ -76,10 +76,10 @@ handler = get_handler("base64")
 ### Step 1: Update Imports
 ```python
 # Old
-from fastapi_base64_crypto import encrypt_response, decrypt_request, crypto_middleware
+from fastapi_shield import encrypt_response, decrypt_request, crypto_middleware
 
 # New
-from fastapi_base64_crypto import PayloadShieldEnc, PayloadShieldDec, PayloadShield
+from fastapi_shield import PayloadShieldEnc, PayloadShieldDec, PayloadShield
 ```
 
 ### Step 2: Update Decorators
@@ -133,7 +133,7 @@ async def process_data(data: dict):
 ### Step 3: Add Custom Handlers (Optional)
 
 ```python
-from fastapi_base64_crypto import EncryptionHandler, register_handler
+from fastapi_shield import EncryptionHandler, register_handler
 from cryptography.fernet import Fernet
 import json
 
@@ -161,19 +161,19 @@ async def secure_endpoint(data: dict):
 ## File Changes
 
 ### Modified Files
-1. **`fastapi_base64_crypto/crypto.py`**
+1. **`fastapi_shield/crypto.py`**
    - Added `EncryptionHandler` abstract base class
    - Added `Base64EncryptionHandler` implementation
    - Added handler registry: `register_handler()`, `get_handler()`
    - Kept legacy functions for backward compatibility
 
-2. **`fastapi_base64_crypto/decorators.py`**
+2. **`fastapi_shield/decorators.py`**
    - Added `PayloadShieldEnc(type)` decorator (parameterized)
    - Added `PayloadShieldDec(type)` decorator (parameterized)
    - Added `PayloadShield(type)` decorator (parameterized)
    - Kept old decorators for backward compatibility
 
-3. **`fastapi_base64_crypto/__init__.py`**
+3. **`fastapi_shield/__init__.py`**
    - Updated exports to include new decorators
    - Updated exports to include `EncryptionHandler`, `register_handler()`, `get_handler()`
    - Updated version to 2.0.0

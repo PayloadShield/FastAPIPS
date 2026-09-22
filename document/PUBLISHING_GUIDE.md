@@ -72,7 +72,7 @@ Password: [Your API token from https://pypi.org/account/manage]
 
 ```
 fastapi-shield/
-├── fastapi_base64_crypto/
+├── fastapi_shield/
 │   ├── __init__.py
 │   ├── crypto.py
 │   └── decorators.py
@@ -107,10 +107,10 @@ Before running publish script:
 ls -la  # or dir on Windows
 
 # 2. Test imports
-python -c "from fastapi_base64_crypto import PayloadShield; print('✅ OK')"
+python -c "from fastapi_shield import PayloadShield; print('✅ OK')"
 
 # 3. Check version
-python -c "import fastapi_base64_crypto; print(f'Version: {fastapi_base64_crypto.__version__}')"
+python -c "import fastapi_shield; print(f'Version: {fastapi_shield.__version__}')"
 
 # 4. Verify setup.py
 python setup.py --version

@@ -10,7 +10,7 @@ Successfully refactored **FastAPI Payload Shield** from a static base64-only pac
 
 ### Before (v1.0.0)
 ```python
-from fastapi_base64_crypto import encrypt_response, decrypt_request, crypto_middleware
+from fastapi_shield import encrypt_response, decrypt_request, crypto_middleware
 
 @app.get("/api/data")
 @encrypt_response  # Fixed to base64 only
@@ -26,7 +26,7 @@ async def get_data():
 
 ### After (v2.0.0)
 ```python
-from fastapi_base64_crypto import PayloadShieldEnc, PayloadShieldDec, PayloadShield, register_handler
+from fastapi_shield import PayloadShieldEnc, PayloadShieldDec, PayloadShield, register_handler
 
 # Register any encryption type
 register_handler("aes", AESHandler(key))
@@ -197,7 +197,7 @@ No modifications needed to core package. Just:
 
 ✅ **Package imports successfully**
 ```bash
-from fastapi_base64_crypto import (
+from fastapi_shield import (
     PayloadShieldEnc, PayloadShieldDec, PayloadShield,
     EncryptionHandler, register_handler, get_handler
 )
@@ -205,7 +205,7 @@ from fastapi_base64_crypto import (
 
 ✅ **Backward compatibility maintained**
 ```bash
-from fastapi_base64_crypto import (
+from fastapi_shield import (
     encrypt_response, decrypt_request, crypto_middleware
 )
 ```
@@ -227,7 +227,7 @@ pip install -e .
 ### Basic Usage
 ```python
 from fastapi import FastAPI
-from fastapi_base64_crypto import PayloadShield
+from fastapi_shield import PayloadShield
 
 app = FastAPI()
 
@@ -239,7 +239,7 @@ async def endpoint(data: dict):
 
 ### With Custom Handler
 ```python
-from fastapi_base64_crypto import EncryptionHandler, register_handler, PayloadShield
+from fastapi_shield import EncryptionHandler, register_handler, PayloadShield
 from cryptography.fernet import Fernet
 import json
 

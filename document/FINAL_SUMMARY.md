@@ -97,7 +97,7 @@ FastAPIPS/
 │   ├── QUICK_REFERENCE.md                ← API reference
 │   └── REFACTORING_SUMMARY.md            ← Migration guide
 │
-├── 📁 fastapi_base64_crypto/             ← Package source
+├── 📁 fastapi_shield/             ← Package source
 │   ├── __init__.py
 │   ├── crypto.py
 │   └── decorators.py

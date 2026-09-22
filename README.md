@@ -22,7 +22,7 @@ pip install -e .
 
 ### From PyPI (when published)
 ```bash
-pip install fastapi-payload-shield
+pip install fastapi-shield
 ```
 
 ## Quick Start
@@ -31,7 +31,7 @@ pip install fastapi-payload-shield
 
 ```python
 from fastapi import FastAPI
-from fastapi_base64_crypto import PayloadShieldEnc, PayloadShieldDec, PayloadShield
+from fastapi_shield import PayloadShieldEnc, PayloadShieldDec, PayloadShield
 
 app = FastAPI()
 
@@ -99,7 +99,7 @@ async def secure_endpoint(data: dict):
 
 ```python
 from fastapi import FastAPI
-from fastapi_base64_crypto import PayloadShield, register_handler, EncryptionHandler
+from fastapi_shield import PayloadShield, register_handler, EncryptionHandler
 from cryptography.fernet import Fernet
 import json
 
@@ -211,7 +211,7 @@ See [CUSTOM_HANDLERS.md](CUSTOM_HANDLERS.md) for detailed guide on:
 Old decorator names still work:
 
 ```python
-from fastapi_base64_crypto import encrypt_response, decrypt_request, crypto_middleware
+from fastapi_shield import encrypt_response, decrypt_request, crypto_middleware
 
 # These are equivalent to:
 # PayloadShieldEnc("base64")
@@ -274,7 +274,7 @@ The decorators include built-in error handling:
 
 ## Files Included
 
-- `fastapi_base64_crypto/` - Main package
+- `fastapi_shield/` - Main package
   - `__init__.py` - Exports decorators and handlers
   - `crypto.py` - Encryption handlers
   - `decorators.py` - FastAPI decorators

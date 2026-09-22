@@ -78,7 +78,7 @@ FastAPIPS/
 │   ├── QUICK_REFERENCE.md
 │   └── REFACTORING_SUMMARY.md
 │
-├── fastapi_base64_crypto/
+├── fastapi_shield/
 │   ├── __init__.py
 │   ├── crypto.py
 │   └── decorators.py
@@ -254,7 +254,7 @@ python examples/example_app.py
 python examples/test_client.py
 
 # Verify imports
-python -c "from fastapi_base64_crypto import PayloadShield; print('✅ Import successful')"
+python -c "from fastapi_shield import PayloadShield; print('✅ Import successful')"
 ```
 
 ---

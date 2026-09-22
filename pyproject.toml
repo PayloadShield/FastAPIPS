@@ -45,7 +45,7 @@ Repository = "https://github.com/PayloadShield/FastAPIPS.git"
 Issues = "https://github.com/PayloadShield/FastAPIPS/issues"
 
 [tool.setuptools]
-packages = ["fastapi_base64_crypto"]
+packages = ["fastapi_shield"]
 
 [tool.setuptools.package-data]
-fastapi_base64_crypto = ["py.typed"]
+fastapi_shield = ["py.typed"]

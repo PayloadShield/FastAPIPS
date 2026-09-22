@@ -4,7 +4,7 @@
 
 ```
 FastAPIPS/
-├── fastapi_base64_crypto/           # Main package directory
+├── fastapi_shield/           # Main package directory
 │   ├── __init__.py                  # Package initialization & exports
 │   ├── crypto.py                    # Base64 encoding/decoding utilities
 │   └── decorators.py                # FastAPI decorators for encryption/decryption
@@ -94,9 +94,9 @@ curl -X POST http://localhost:8000/api/login \
 ## Adding New Features
 
 ### Add a New Decorator
-1. Edit `fastapi_base64_crypto/decorators.py`
+1. Edit `fastapi_shield/decorators.py`
 2. Add your decorator function
-3. Export it in `fastapi_base64_crypto/__init__.py`
+3. Export it in `fastapi_shield/__init__.py`
 
 Example:
 ```python
@@ -114,7 +114,7 @@ __all__ = [..., "my_new_decorator"]
 ```
 
 ### Add New Crypto Functions
-1. Edit `fastapi_base64_crypto/crypto.py`
+1. Edit `fastapi_shield/crypto.py`
 2. Add your function
 3. Export if needed in `__init__.py`
 
@@ -124,7 +124,7 @@ __all__ = [..., "my_new_decorator"]
 Edit version in:
 - `setup.py`
 - `pyproject.toml`
-- `fastapi_base64_crypto/__init__.py`
+- `fastapi_shield/__init__.py`
 
 ### 2. Install Build Tools
 ```bash
@@ -149,17 +149,17 @@ twine upload dist/*
 
 ### Format Code
 ```bash
-black fastapi_base64_crypto examples
+black fastapi_shield examples
 ```
 
 ### Lint Code
 ```bash
-flake8 fastapi_base64_crypto examples
+flake8 fastapi_shield examples
 ```
 
 ### Type Checking
 ```bash
-mypy fastapi_base64_crypto
+mypy fastapi_shield
 ```
 
 ## Creating Tests
@@ -169,7 +169,7 @@ Create a `tests/` directory with pytest tests:
 ```python
 # tests/test_crypto.py
 import pytest
-from fastapi_base64_crypto.crypto import encode_base64, decode_base64
+from fastapi_shield.crypto import encode_base64, decode_base64
 
 def test_encode_decode():
     data = {"key": "value"}
@@ -216,7 +216,7 @@ pip install -r requirements.txt
 
 ```bash
 # Check installed version
-python -c "import fastapi_base64_crypto; print(fastapi_base64_crypto.__version__)"
+python -c "import fastapi_shield; print(fastapi_shield.__version__)"
 
 # View package info
 pip show fastapi-shield

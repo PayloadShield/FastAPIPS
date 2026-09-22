@@ -17,7 +17,7 @@ The package is built on three key components:
 Inherit from `EncryptionHandler` and implement two methods:
 
 ```python
-from fastapi_base64_crypto import EncryptionHandler
+from fastapi_shield import EncryptionHandler
 import json
 from typing import Any
 
@@ -70,7 +70,7 @@ class CustomEncryptionHandler(EncryptionHandler):
 Before using your custom handler, register it with the package:
 
 ```python
-from fastapi_base64_crypto import register_handler
+from fastapi_shield import register_handler
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -94,7 +94,7 @@ async def secure_endpoint():
 
 ```python
 from cryptography.fernet import Fernet
-from fastapi_base64_crypto import EncryptionHandler, register_handler
+from fastapi_shield import EncryptionHandler, register_handler
 import json
 from typing import Any
 
@@ -135,7 +135,7 @@ from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
 import base64
 import json
-from fastapi_base64_crypto import EncryptionHandler, register_handler
+from fastapi_shield import EncryptionHandler, register_handler
 from typing import Any
 
 class AESEncryptionHandler(EncryptionHandler):
@@ -194,7 +194,7 @@ register_handler("aes", aes_handler)
 ### Example 3: Custom JSON + Obfuscation Handler
 
 ```python
-from fastapi_base64_crypto import EncryptionHandler, register_handler
+from fastapi_shield import EncryptionHandler, register_handler
 import json
 import base64
 from typing import Any
@@ -252,7 +252,7 @@ You can register and use multiple encryption types in the same application:
 
 ```python
 from fastapi import FastAPI
-from fastapi_base64_crypto import (
+from fastapi_shield import (
     PayloadShieldEnc, PayloadShieldDec, PayloadShield,
     register_handler
 )
@@ -316,7 +316,7 @@ async def high_security(data: dict):
 
 ```python
 from fastapi import FastAPI
-from fastapi_base64_crypto import PayloadShield, register_handler
+from fastapi_shield import PayloadShield, register_handler
 from cryptography.fernet import Fernet
 import os
 
@@ -326,7 +326,7 @@ app = FastAPI()
 fernet_key = os.getenv("FERNET_KEY", Fernet.generate_key()).encode()
 
 # Create and register handler
-from fastapi_base64_crypto import EncryptionHandler
+from fastapi_shield import EncryptionHandler
 import json
 from typing import Any
 

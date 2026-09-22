@@ -5,7 +5,7 @@ Demonstrates PayloadShieldEnc, PayloadShieldDec, and PayloadShield decorators
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_base64_crypto import PayloadShieldEnc, PayloadShieldDec, PayloadShield
+from fastapi_shield import PayloadShieldEnc, PayloadShieldDec, PayloadShield
 import uvicorn
 
 app = FastAPI(title="FastAPI Payload Shield Example")
