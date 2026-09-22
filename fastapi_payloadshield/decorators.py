@@ -1,229 +1,146 @@
 """
-Decorators for automatic payload encryption/decryption in FastAPI
-Supports multiple encryption types via pluggable EncryptionHandler interface
+Decorators for automatic payload encryption/decryption in FastAPI.
+Supports multiple encryption types via the pluggable EncryptionHandler
+interface. Configure keys globally with PayloadShieldEnc.init(...) before
+using any of these decorators.
 """
 
 from functools import wraps
-from typing import Callable, Any, Optional
+from typing import Any, Callable, Optional
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from .crypto import (
-    EncryptionHandler,
-    get_handler,
-    encode_response,
-    decode_request,
-)
+
+from .config import PayloadShieldEnc
+from .crypto import get_handler
 
 
-# ============================================================================
-# PayloadShieldEnc - Response Encryption Decorator
-# ============================================================================
+def _find_request(args: tuple) -> Optional[Request]:
+    """Locate the FastAPI Request object among positional arguments."""
+    for arg in args:
+        if isinstance(arg, Request):
+            return arg
+    return None
 
-def PayloadShieldEnc(encryption_type: str = "base64"):
+
+def _replace_body_kwarg(kwargs: dict, original_body: Any, decrypted_data: Any) -> dict:
+    """Replace the kwarg matching the raw request body with decrypted data."""
+    for key, value in kwargs.items():
+        if isinstance(value, dict) and value == original_body:
+            kwargs[key] = decrypted_data
+            break
+    return kwargs
+
+
+def _wrap_encrypted(data: Any) -> dict:
+    """Normalize a route's return value into a dict payload before encoding."""
+    return data if isinstance(data, dict) else {"data": data}
+
+
+class PayloadShield:
     """
-    Decorator to automatically encrypt response payload.
-    
-    The decorator intercepts the response and wraps it in a JSON object with
-    an 'encrypted' key containing the encrypted response.
-    
-    Args:
-        encryption_type: Type of encryption to use (default: "base64")
-                        Options: "base64", "aes", "fernet", etc.
-                        Register custom handlers with register_handler()
-    
+    Namespace of decorator factories for encrypting/decrypting FastAPI
+    request and response payloads.
+
     Usage:
+        PayloadShieldEnc.init({"Key": "..."})
+
         @app.get("/api/endpoint")
-        @PayloadShieldEnc("base64")
-        async def my_route():
-            return {"message": "hello", "data": "world"}
-        
-        # Response: {"encrypted": "base64_encoded_data"}
-    
-    Returns:
-        Decorator function
-    """
-    def decorator(func: Callable) -> Callable:
-        handler = get_handler(encryption_type)
-        
-        @wraps(func)
-        async def wrapper(*args, **kwargs):
-            result = await func(*args, **kwargs)
-            
-            # Handle different response types
-            if isinstance(result, dict):
-                encrypted = encode_response(result, handler)
-            else:
-                encrypted = encode_response({"data": result}, handler)
-            
-            return JSONResponse(content=encrypted)
-        
-        return wrapper
-    
-    return decorator
+        @PayloadShield.encrypt("base64")
+        async def route(): ...
 
-
-# ============================================================================
-# PayloadShieldDec - Request Decryption Decorator
-# ============================================================================
-
-def PayloadShieldDec(encryption_type: str = "base64"):
-    """
-    Decorator to automatically decrypt encrypted request payload.
-    
-    The decorator expects the request body to be a JSON object with an 'encrypted' key
-    containing the encrypted data. It decodes this and passes the original data
-    to the route function.
-    
-    Args:
-        encryption_type: Type of encryption to use (default: "base64")
-                        Options: "base64", "aes", "fernet", etc.
-                        Register custom handlers with register_handler()
-    
-    Usage:
         @app.post("/api/endpoint")
-        @PayloadShieldDec("base64")
-        async def my_route(data: dict):
-            # data will be automatically decrypted
-            return {"message": "success"}
-        
-        # Expects: {"encrypted": "encrypted_data"}
-    
-    Returns:
-        Decorator function
+        @PayloadShield.decrypt("base64")
+        async def route(data: dict): ...
+
+        @app.post("/api/endpoint")
+        @PayloadShield.crypt("base64")
+        async def route(data: dict): ...
     """
-    def decorator(func: Callable) -> Callable:
+
+    @staticmethod
+    def encrypt(encryption_type: str = "base64") -> Callable:
+        """
+        Decorator that encrypts the route's response payload only.
+
+        The response is wrapped as ``{"encrypted": "<encoded-data>"}``.
+        """
         handler = get_handler(encryption_type)
-        
-        @wraps(func)
-        async def wrapper(*args, **kwargs):
-            # Check if first argument is a Request object
-            request = None
-            for arg in args:
-                if isinstance(arg, Request):
-                    request = arg
-                    break
-            
-            if request:
-                try:
+
+        def decorator(func: Callable) -> Callable:
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                result = await func(*args, **kwargs)
+                config = PayloadShieldEnc.get_config()
+                encoded = handler.encode(_wrap_encrypted(result), config)
+                return JSONResponse(content={"encrypted": encoded})
+
+            return wrapper
+
+        return decorator
+
+    @staticmethod
+    def decrypt(encryption_type: str = "base64") -> Callable:
+        """
+        Decorator that decrypts the incoming request payload only.
+
+        Expects the request body to be ``{"encrypted": "<encoded-data>"}``.
+        """
+        handler = get_handler(encryption_type)
+
+        def decorator(func: Callable) -> Callable:
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                request = _find_request(args)
+                if request is not None:
                     body = await request.json()
                     if isinstance(body, dict) and "encrypted" in body:
-                        # Decrypt the encrypted data
-                        decrypted_data = decode_request(body["encrypted"], handler)
-                        # Replace the request body in kwargs
-                        for key, value in kwargs.items():
-                            if isinstance(value, dict) and value == body:
-                                kwargs[key] = decrypted_data
-                                break
-                except Exception as e:
-                    return JSONResponse(
-                        status_code=400,
-                        content={"error": f"Failed to decrypt request: {str(e)}"}
-                    )
-            
-            return await func(*args, **kwargs)
-        
-        return wrapper
-    
-    return decorator
+                        config = PayloadShieldEnc.get_config()
+                        try:
+                            decrypted = handler.decode(body["encrypted"], config)
+                        except Exception as e:
+                            return JSONResponse(
+                                status_code=400,
+                                content={"error": f"Failed to decrypt request: {str(e)}"},
+                            )
+                        kwargs = _replace_body_kwarg(kwargs, body, decrypted)
 
+                return await func(*args, **kwargs)
 
-# ============================================================================
-# PayloadShield - Combined Encryption & Decryption Decorator
-# ============================================================================
+            return wrapper
 
-def PayloadShield(encryption_type: str = "base64"):
-    """
-    Combined decorator for both request decryption and response encryption.
-    
-    Automatically handles both incoming encrypted requests and outgoing encrypted responses.
-    
-    Args:
-        encryption_type: Type of encryption to use (default: "base64")
-                        Options: "base64", "aes", "fernet", etc.
-                        Register custom handlers with register_handler()
-    
-    Usage:
-        @app.post("/api/endpoint")
-        @PayloadShield("base64")
-        async def my_route(data: dict):
-            # Automatically decrypts incoming request and encrypts response
-            return {"message": "success"}
-        
-        # Expects: {"encrypted": "encrypted_data"}
-        # Returns: {"encrypted": "encrypted_data"}
-    
-    Returns:
-        Decorator function
-    """
-    def decorator(func: Callable) -> Callable:
+        return decorator
+
+    @staticmethod
+    def crypt(encryption_type: str = "base64") -> Callable:
+        """
+        Decorator that decrypts the incoming request payload and encrypts
+        the outgoing response payload using the same encryption type.
+        """
         handler = get_handler(encryption_type)
-        
-        @wraps(func)
-        async def wrapper(*args, **kwargs):
-            # Handle request decryption
-            request = None
-            for arg in args:
-                if isinstance(arg, Request):
-                    request = arg
-                    break
-            
-            if request:
-                try:
+
+        def decorator(func: Callable) -> Callable:
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                config = PayloadShieldEnc.get_config()
+                request = _find_request(args)
+                if request is not None:
                     body = await request.json()
                     if isinstance(body, dict) and "encrypted" in body:
-                        decrypted_data = decode_request(body["encrypted"], handler)
-                        for key, value in kwargs.items():
-                            if isinstance(value, dict) and value == body:
-                                kwargs[key] = decrypted_data
-                                break
-                except Exception as e:
-                    return JSONResponse(
-                        status_code=400,
-                        content={"error": f"Failed to decrypt request: {str(e)}"}
-                    )
-            
-            # Call the original function
-            result = await func(*args, **kwargs)
-            
-            # Handle response encryption
-            if isinstance(result, dict):
-                encrypted = encode_response(result, handler)
-            else:
-                encrypted = encode_response({"data": result}, handler)
-            
-            return JSONResponse(content=encrypted)
-        
-        return wrapper
-    
-    return decorator
+                        try:
+                            decrypted = handler.decode(body["encrypted"], config)
+                        except Exception as e:
+                            return JSONResponse(
+                                status_code=400,
+                                content={"error": f"Failed to decrypt request: {str(e)}"},
+                            )
+                        kwargs = _replace_body_kwarg(kwargs, body, decrypted)
 
+                result = await func(*args, **kwargs)
+                encoded = handler.encode(_wrap_encrypted(result), config)
+                return JSONResponse(content={"encrypted": encoded})
 
-# ============================================================================
-# Backward Compatibility - Old Decorator Names
-# ============================================================================
+            return wrapper
 
-def encrypt_response(func: Callable) -> Callable:
-    """
-    Deprecated: Use PayloadShieldEnc("base64") instead.
-    
-    Decorator to automatically encrypt response payload with base64.
-    """
-    return PayloadShieldEnc("base64")(func)
+        return decorator
 
-
-def decrypt_request(func: Callable) -> Callable:
-    """
-    Deprecated: Use PayloadShieldDec("base64") instead.
-    
-    Decorator to automatically decrypt base64 encoded request payload.
-    """
-    return PayloadShieldDec("base64")(func)
-
-
-def crypto_middleware(func: Callable) -> Callable:
-    """
-    Deprecated: Use PayloadShield("base64") instead.
-    
-    Combined decorator for both request decryption and response encryption.
-    """
-    return PayloadShield("base64")(func)

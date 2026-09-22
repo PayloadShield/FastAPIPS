@@ -6,21 +6,31 @@
 FastAPIPS/
 ├── fastapi_payloadshield/           # Main package directory
 │   ├── __init__.py                  # Package initialization & exports
-│   ├── crypto.py                    # Base64 encoding/decoding utilities
-│   └── decorators.py                # FastAPI decorators for encryption/decryption
+│   ├── config.py                    # PayloadShieldEnc key configuration
+│   ├── decorators.py                # PayloadShield.encrypt/decrypt/crypt decorators
+│   ├── crypto.py                    # Handler registry (register_handler/get_handler)
+│   ├── EncryptionHandler.py         # Abstract handler interface
+│   ├── Base64EncryptionHandler.py   # base64 handler
+│   ├── FernetEncryptionHandler.py   # fernet handler
+│   ├── AESGCM256EncryptionHandler.py# aes-gcm-256 handler
+│   └── HybridRSAEncryptionHandler.py# rsa-hybrid handler
 │
 ├── examples/                        # Example implementations
 │   ├── example_app.py               # Full-featured example FastAPI app
 │   └── test_client.py               # Client script to test the API
 │
+├── tests/                           # pytest suite
+│   ├── test_handlers.py             # Handler encode/decode roundtrip tests
+│   ├── test_config.py               # PayloadShieldEnc.init() tests
+│   └── test_decorators.py           # Decorator + FastAPI TestClient tests
+│
 ├── setup.py                         # Classic setup configuration (pip installable)
 ├── pyproject.toml                   # Modern Python project configuration
 ├── requirements.txt                 # Development & runtime dependencies
-├── README.md                        # Comprehensive documentation
-├── QUICKSTART.md                    # Quick start guide
+├── README.md                        # Full API documentation
 ├── MANIFEST.in                      # Files to include in distribution
 ├── .gitignore                       # Git ignore patterns
-└── LICENSE                          # MIT License
+└── LICENSE                          # Apache-2.0 License
 ```
 
 ## Installation for Development
@@ -78,72 +88,29 @@ curl -X POST http://localhost:8000/api/login \
   -d '{"encrypted":"eyJ1c2VybmFtZSI6ICJhZG1pbiIsICJwYXNzd29yZCI6ICJwYXNzd29yZDEyMyJ9"}'
 ```
 
-## Package Components
-
-### 1. `crypto.py` - Utilities
-- `encode_base64(data)` - Encode data to base64
-- `decode_base64(encoded_data)` - Decode base64 to data
-- `encode_response(data)` - Wrap response in encryption format
-- `decode_request(encoded_data)` - Decode request format
-
-### 2. `decorators.py` - Decorators
-- `@encrypt_response` - Encrypts response payload
-- `@decrypt_request` - Decrypts request payload
-- `@crypto_middleware` - Combined encryption/decryption
-
-## Adding New Features
-
-### Add a New Decorator
-1. Edit `fastapi_payloadshield/decorators.py`
-2. Add your decorator function
-3. Export it in `fastapi_payloadshield/__init__.py`
-
-Example:
-```python
-# In decorators.py
-def my_new_decorator(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        # Your logic here
-        return await func(*args, **kwargs)
-    return wrapper
-
-# In __init__.py
-from .decorators import my_new_decorator
-__all__ = [..., "my_new_decorator"]
+### Option 3: Run the pytest Suite
+```bash
+pytest
 ```
 
-### Add New Crypto Functions
-1. Edit `fastapi_payloadshield/crypto.py`
-2. Add your function
-3. Export if needed in `__init__.py`
+## Package Components
+
+See [../README.md](../README.md) for the full API reference
+(`PayloadShieldEnc.init`, `PayloadShield.encrypt/decrypt/crypt`, built-in
+handlers, and custom handler registration). This guide only covers
+day-to-day development workflows.
+
+## Adding a New Built-in Handler
+
+1. Create `fastapi_payloadshield/MyHandler.py` implementing
+   `EncryptionHandler.encode(data, config)` / `.decode(encoded_data, config)`.
+2. Register it in `fastapi_payloadshield/crypto.py`'s `_HANDLERS` dict.
+3. Export the class from `fastapi_payloadshield/__init__.py`.
+4. Add a roundtrip test in `tests/test_handlers.py`.
 
 ## Publishing to PyPI
 
-### 1. Update Version
-Edit version in:
-- `setup.py`
-- `pyproject.toml`
-- `fastapi_payloadshield/__init__.py`
-
-### 2. Install Build Tools
-```bash
-pip install build twine
-```
-
-### 3. Build Package
-```bash
-python -m build
-```
-
-### 4. Upload to PyPI
-```bash
-# Test PyPI first (optional)
-twine upload --repository testpypi dist/*
-
-# Production PyPI
-twine upload dist/*
-```
+See [PUBLISHING_GUIDE.md](PUBLISHING_GUIDE.md) for the full release process.
 
 ## Code Style
 
@@ -160,27 +127,6 @@ flake8 fastapi_payloadshield examples
 ### Type Checking
 ```bash
 mypy fastapi_payloadshield
-```
-
-## Creating Tests
-
-Create a `tests/` directory with pytest tests:
-
-```python
-# tests/test_crypto.py
-import pytest
-from fastapi_payloadshield.crypto import encode_base64, decode_base64
-
-def test_encode_decode():
-    data = {"key": "value"}
-    encoded = encode_base64(data)
-    decoded = decode_base64(encoded)
-    assert decoded == data
-```
-
-Run tests:
-```bash
-pytest
 ```
 
 ## Contributing
@@ -232,9 +178,11 @@ rm -rf build/ dist/ *.egg-info
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Python Packaging Guide](https://packaging.python.org/)
-- [Base64 RFC 4648](https://tools.ietf.org/html/rfc4648)
+- [cryptography library](https://cryptography.io/)
 - [Setuptools Documentation](https://setuptools.readthedocs.io/)
 
 ## License
 
-MIT License - See LICENSE file for details
+Apache-2.0 - See [../LICENSE](../LICENSE) for details.
+
+

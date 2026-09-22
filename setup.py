@@ -9,10 +9,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="fastapi_payloadshield",
-    version="1.0.0",
+    version="3.0.0",
     author="Ganesh Kandu",
     author_email="kanduganesh@gmail.com",
-    description="FastAPI decorators for automatic base64 encryption/decryption of request/response payloads",
+    description="Pluggable FastAPI decorators for encrypting/decrypting request and response payloads",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/PayloadShield/FastAPIPS",
@@ -36,6 +36,7 @@ setup(
     install_requires=[
         "fastapi>=0.68.0",
         "starlette>=0.19.0",
+        "cryptography>=41.0.0",
     ],
     extras_require={
         "dev": [

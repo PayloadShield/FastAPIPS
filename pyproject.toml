@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastapi_payloadshield"
-version = "1.0.0"
-description = "FastAPI decorators for automatic base64 encryption/decryption of request/response payloads"
+version = "3.0.0"
+description = "Pluggable FastAPI decorators for encrypting/decrypting request and response payloads"
 readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "Apache-2.0"}
@@ -31,6 +31,7 @@ classifiers = [
 dependencies = [
     "fastapi>=0.68.0",
     "starlette>=0.19.0",
+    "cryptography>=41.0.0",
 ]
 
 [project.optional-dependencies]

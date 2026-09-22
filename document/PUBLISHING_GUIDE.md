@@ -43,7 +43,7 @@ The publish script automatically:
 
 ```
 Name: fastapi_payloadshield
-Version: 1.0.0
+Version: 3.0.0
 License: Apache-2.0
 Author: Ganesh Kandu
 Repository: https://github.com/PayloadShield/FastAPIPS
@@ -74,8 +74,14 @@ Password: [Your API token from https://pypi.org/account/manage]
 fastapi_payloadshield/
 ├── fastapi_payloadshield/
 │   ├── __init__.py
+│   ├── config.py
 │   ├── crypto.py
-│   └── decorators.py
+│   ├── decorators.py
+│   ├── EncryptionHandler.py
+│   ├── Base64EncryptionHandler.py
+│   ├── FernetEncryptionHandler.py
+│   ├── AESGCM256EncryptionHandler.py
+│   └── HybridRSAEncryptionHandler.py
 ├── examples/
 │   ├── example_app.py
 │   └── test_client.py
@@ -86,14 +92,9 @@ fastapi_payloadshield/
 └── requirements.txt
 
 PLUS all files from document/ folder:
-├── document/COMPLETION_SUMMARY.md
-├── document/CUSTOM_HANDLERS.md
-├── document/DELIVERY_CHECKLIST.md
 ├── document/DEVELOPMENT.md
-├── document/PACKAGE_SUMMARY.md
-├── document/QUICKSTART.md
-├── document/QUICK_REFERENCE.md
-└── document/REFACTORING_SUMMARY.md
+├── document/PUBLISHING_GUIDE.md
+└── document/PROJECT_JOURNEY.md
 ```
 
 ---
@@ -140,9 +141,9 @@ pip install fastapi_payloadshield[dev]
 ## 📊 Project Statistics
 
 - **Total Files**: 15+
-- **Python Modules**: 3
+- **Python Modules**: 9
 - **Example Applications**: 2
-- **Documentation Files**: 8 (in document/)
+- **Documentation Files**: 3 (in document/)
 - **Configuration Files**: 5
 - **Publication Scripts**: 2
 
