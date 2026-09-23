@@ -22,7 +22,7 @@ from .crypto import (
     get_handler,
 )
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Ganesh Kandu"
 
 __all__ = [

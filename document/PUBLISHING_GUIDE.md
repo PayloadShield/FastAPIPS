@@ -43,7 +43,7 @@ The publish script automatically:
 
 ```
 Name: fastapi_payloadshield
-Version: 3.0.0
+Version: 1.2.0
 License: Apache-2.0
 Author: Ganesh Kandu
 Repository: https://github.com/PayloadShield/FastAPIPS
