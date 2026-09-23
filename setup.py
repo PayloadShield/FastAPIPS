@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="fastapi_payloadshield",
-    version="3.0.0",
+    version="3.0.0.1",
     author="Ganesh Kandu",
     author_email="kanduganesh@gmail.com",
     description="Pluggable FastAPI decorators for encrypting/decrypting request and response payloads",
