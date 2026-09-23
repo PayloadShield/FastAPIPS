@@ -47,10 +47,10 @@ echo "Package Information:"
 echo "========================================"
 python << 'EOF'
 import re
-with open('setup.py', 'r') as f:
+with open('pyproject.toml', 'r') as f:
     content = f.read()
-    name = re.search(r'name="([^"]+)"', content)
-    version = re.search(r'version="([^"]+)"', content)
+    name = re.search(r'name = "([^"]+)"', content)
+    version = re.search(r'version = "([^"]+)"', content)
     if name:
         print(f'Package Name: {name.group(1)}')
     if version:
@@ -60,12 +60,18 @@ print('License: Apache-2.0')
 EOF
 echo "========================================"
 echo ""
-echo "Note: You will be prompted for PyPI credentials"
-echo "If you don't have a PyPI account, create one at: https://pypi.org/account/register/"
+echo "PyPI no longer accepts plain username/password uploads."
+echo "When prompted, use:"
+echo "  Username: __token__"
+echo "  Password: your API token (starts with pypi-), from https://pypi.org/manage/account/token/"
+echo ""
+echo "Tip: export TWINE_USERNAME=__token__ and TWINE_PASSWORD=pypi-xxxx (or create"
+echo "~/.pypirc) to skip the prompt entirely."
 echo ""
 
-# Publish to PyPI
-if python -m twine upload dist/* --verbose; then
+# Publish to PyPI. --skip-existing avoids a hard failure if this exact
+# version/file was already uploaded; bump the version instead to publish new changes.
+if python -m twine upload --skip-existing dist/* --verbose; then
     echo ""
     echo "========================================"
     echo "Success! Package published to PyPI"
@@ -81,9 +87,11 @@ else
     echo "Error: Upload to PyPI failed"
     echo ""
     echo "Troubleshooting tips:"
-    echo "- Make sure you have a PyPI account: https://pypi.org/account/register/"
-    echo "- Check your credentials and try again"
-    echo "- If using 2FA, you may need to use an API token"
+    echo "- Use __token__ as the username and a PyPI API token as the password"
+    echo "  (plain account password logins are rejected by PyPI)"
+    echo "- Create a token at: https://pypi.org/manage/account/token/"
+    echo "- If the version was already published, bump the version in"
+    echo "  pyproject.toml and setup.py, then rerun this script"
     echo ""
     exit 1
 fi

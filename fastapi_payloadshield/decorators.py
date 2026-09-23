@@ -5,8 +5,9 @@ interface. Configure keys globally with PayloadShieldEnc.init(...) before
 using any of these decorators.
 """
 
+import inspect
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
@@ -14,13 +15,36 @@ from fastapi.responses import JSONResponse
 from .config import PayloadShieldEnc
 from .crypto import get_handler
 
+_INJECTED_REQUEST_PARAM = "__payloadshield_request__"
 
-def _find_request(args: tuple) -> Optional[Request]:
-    """Locate the FastAPI Request object among positional arguments."""
-    for arg in args:
-        if isinstance(arg, Request):
-            return arg
-    return None
+
+def _prepare_request_injection(func: Callable) -> str:
+    """
+    Ensure the route function's signature (as seen by FastAPI) includes a
+    ``Request`` parameter, and return the keyword name it will arrive under.
+
+    FastAPI resolves a route's parameters purely from the function
+    signature and always invokes it with keyword arguments, so a decorator
+    cannot rely on scanning positional ``args`` to find the ``Request``
+    object. If the original function doesn't already declare a
+    ``request: Request`` parameter, a synthetic keyword-only one is
+    appended to the signature FastAPI sees; the wrapper strips it back out
+    before calling the real function.
+    """
+    sig = inspect.signature(func)
+    for name, param in sig.parameters.items():
+        if param.annotation is Request:
+            return name
+
+    new_params = list(sig.parameters.values()) + [
+        inspect.Parameter(
+            _INJECTED_REQUEST_PARAM,
+            kind=inspect.Parameter.KEYWORD_ONLY,
+            annotation=Request,
+        )
+    ]
+    func.__signature__ = sig.replace(parameters=new_params)
+    return _INJECTED_REQUEST_PARAM
 
 
 def _replace_body_kwarg(kwargs: dict, original_body: Any, decrypted_data: Any) -> dict:
@@ -89,24 +113,26 @@ class PayloadShield:
         handler = get_handler(encryption_type)
 
         def decorator(func: Callable) -> Callable:
+            request_kwarg = _prepare_request_injection(func)
+
             @wraps(func)
             async def wrapper(*args, **kwargs):
-                request = _find_request(args)
-                if request is not None:
-                    body = await request.json()
-                    if isinstance(body, dict) and "encrypted" in body:
-                        config = PayloadShieldEnc.get_config()
-                        try:
-                            decrypted = handler.decode(body["encrypted"], config)
-                        except Exception as e:
-                            return JSONResponse(
-                                status_code=400,
-                                content={"error": f"Failed to decrypt request: {str(e)}"},
-                            )
-                        kwargs = _replace_body_kwarg(kwargs, body, decrypted)
+                request: Request = kwargs.pop(request_kwarg)
+                body = await request.json()
+                if isinstance(body, dict) and "encrypted" in body:
+                    config = PayloadShieldEnc.get_config()
+                    try:
+                        decrypted = handler.decode(body["encrypted"], config)
+                    except Exception as e:
+                        return JSONResponse(
+                            status_code=400,
+                            content={"error": f"Failed to decrypt request: {str(e)}"},
+                        )
+                    kwargs = _replace_body_kwarg(kwargs, body, decrypted)
 
                 return await func(*args, **kwargs)
 
+            wrapper.__signature__ = func.__signature__
             return wrapper
 
         return decorator
@@ -120,26 +146,28 @@ class PayloadShield:
         handler = get_handler(encryption_type)
 
         def decorator(func: Callable) -> Callable:
+            request_kwarg = _prepare_request_injection(func)
+
             @wraps(func)
             async def wrapper(*args, **kwargs):
                 config = PayloadShieldEnc.get_config()
-                request = _find_request(args)
-                if request is not None:
-                    body = await request.json()
-                    if isinstance(body, dict) and "encrypted" in body:
-                        try:
-                            decrypted = handler.decode(body["encrypted"], config)
-                        except Exception as e:
-                            return JSONResponse(
-                                status_code=400,
-                                content={"error": f"Failed to decrypt request: {str(e)}"},
-                            )
-                        kwargs = _replace_body_kwarg(kwargs, body, decrypted)
+                request: Request = kwargs.pop(request_kwarg)
+                body = await request.json()
+                if isinstance(body, dict) and "encrypted" in body:
+                    try:
+                        decrypted = handler.decode(body["encrypted"], config)
+                    except Exception as e:
+                        return JSONResponse(
+                            status_code=400,
+                            content={"error": f"Failed to decrypt request: {str(e)}"},
+                        )
+                    kwargs = _replace_body_kwarg(kwargs, body, decrypted)
 
                 result = await func(*args, **kwargs)
                 encoded = handler.encode(_wrap_encrypted(result), config)
                 return JSONResponse(content={"encrypted": encoded})
 
+            wrapper.__signature__ = func.__signature__
             return wrapper
 
         return decorator

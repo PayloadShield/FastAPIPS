@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastapi_payloadshield"
-version = "3.0.0.1"
+version = "1.1.0"
 description = "Pluggable FastAPI decorators for encrypting/decrypting request and response payloads"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 authors = [
     {name = "Ganesh Kandu", email = "kanduganesh@gmail.com"},
 ]
@@ -20,7 +20,6 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
