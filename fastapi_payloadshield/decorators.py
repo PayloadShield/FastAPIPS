@@ -61,6 +61,14 @@ def _wrap_encrypted(data: Any) -> dict:
     return data if isinstance(data, dict) else {"data": data}
 
 
+async def _call_func(func: Callable, *args, **kwargs) -> Any:
+    """Call a route function, awaiting it only if it's a coroutine function."""
+    result = func(*args, **kwargs)
+    if inspect.isawaitable(result):
+        return await result
+    return result
+
+
 class PayloadShield:
     """
     Namespace of decorator factories for encrypting/decrypting FastAPI
@@ -94,7 +102,7 @@ class PayloadShield:
         def decorator(func: Callable) -> Callable:
             @wraps(func)
             async def wrapper(*args, **kwargs):
-                result = await func(*args, **kwargs)
+                result = await _call_func(func, *args, **kwargs)
                 config = PayloadShieldEnc.get_config()
                 encoded = handler.encode(_wrap_encrypted(result), config)
                 return JSONResponse(content={"encrypted": encoded})
@@ -130,7 +138,7 @@ class PayloadShield:
                         )
                     kwargs = _replace_body_kwarg(kwargs, body, decrypted)
 
-                return await func(*args, **kwargs)
+                return await _call_func(func, *args, **kwargs)
 
             wrapper.__signature__ = func.__signature__
             return wrapper
@@ -163,7 +171,7 @@ class PayloadShield:
                         )
                     kwargs = _replace_body_kwarg(kwargs, body, decrypted)
 
-                result = await func(*args, **kwargs)
+                result = await _call_func(func, *args, **kwargs)
                 encoded = handler.encode(_wrap_encrypted(result), config)
                 return JSONResponse(content={"encrypted": encoded})
 
