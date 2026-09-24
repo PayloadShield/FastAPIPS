@@ -129,6 +129,7 @@ async def secure_endpoint(data: dict):
 | `fernet` | Fernet (AES-128-CBC + HMAC) | `Key` | Symmetric, authenticated |
 | `aes-gcm-256` | AES-256-GCM | `Key` (32 bytes) | Symmetric, authenticated |
 | `rsa-hybrid` | RSA-OAEP + AES-256-GCM | `PublicKey` (encrypt), `PrivateKey` (decrypt) | Asymmetric/hybrid |
+| `chacha20-poly1305` | chacha20-poly1305 | `Key` (32 bytes) | Symmetric, authenticated |
 
 ## Custom Handlers
 

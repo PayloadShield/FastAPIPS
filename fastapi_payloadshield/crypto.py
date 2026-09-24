@@ -8,6 +8,7 @@ from .Base64EncryptionHandler import Base64EncryptionHandler
 from .FernetEncryptionHandler import FernetEncryptionHandler
 from .AESGCM256EncryptionHandler import AESGCM256EncryptionHandler
 from .HybridRSAEncryptionHandler import HybridRSAEncryptionHandler
+from .ChaChaEncryptionHandler import ChaChaEncryptionHandler
 
 # ============================================================================
 # Handler Registry & Factory
@@ -18,6 +19,7 @@ _HANDLERS = {
     "fernet": FernetEncryptionHandler(),
     "aes-gcm-256": AESGCM256EncryptionHandler(),
     "rsa-hybrid": HybridRSAEncryptionHandler(),
+    "chacha20-poly1305": ChaChaEncryptionHandler(),
 }
 
 
