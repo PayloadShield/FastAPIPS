@@ -2,7 +2,7 @@
 FastAPI Payload Shield Package
 Provides decorators for automatic encryption/decryption of request/response
 payloads with pluggable encryption handlers (base64, fernet, aes-gcm-256,
-rsa-hybrid, etc.)
+chacha20-poly1305, rsa-hybrid, ecdh-aes-gcm, ecies, hpke, etc.)
 """
 
 # Configuration
@@ -18,11 +18,15 @@ from .crypto import (
     FernetEncryptionHandler,
     AESGCM256EncryptionHandler,
     HybridRSAEncryptionHandler,
+    ChaChaEncryptionHandler,
+    ECDHAESGCMEncryptionHandler,
+    ECIESEncryptionHandler,
+    HPKEEncryptionHandler,
     register_handler,
     get_handler,
 )
 
-__version__ = "1.2.1.1"
+__version__ = "1.2.3"
 __author__ = "Ganesh Kandu"
 
 __all__ = [
@@ -36,6 +40,10 @@ __all__ = [
     "FernetEncryptionHandler",
     "AESGCM256EncryptionHandler",
     "HybridRSAEncryptionHandler",
+    "ChaChaEncryptionHandler",
+    "ECDHAESGCMEncryptionHandler",
+    "ECIESEncryptionHandler",
+    "HPKEEncryptionHandler",
     "register_handler",
     "get_handler",
 ]

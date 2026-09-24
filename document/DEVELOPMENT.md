@@ -13,11 +13,17 @@ FastAPIPS/
 │   ├── Base64EncryptionHandler.py   # base64 handler
 │   ├── FernetEncryptionHandler.py   # fernet handler
 │   ├── AESGCM256EncryptionHandler.py# aes-gcm-256 handler
-│   └── HybridRSAEncryptionHandler.py# rsa-hybrid handler
+│   ├── ChaChaEncryptionHandler.py   # chacha20-poly1305 handler
+│   ├── HybridRSAEncryptionHandler.py# rsa-hybrid handler
+│   ├── ECDHAESGCMEncryptionHandler.py# ecdh-aes-gcm handler
+│   ├── ECIESEncryptionHandler.py    # ecies handler
+│   └── HPKEEncryptionHandler.py     # hpke handler
 │
 ├── examples/                        # Example implementations
-│   ├── example_app.py               # Full-featured example FastAPI app
-│   └── test_client.py               # Client script to test the API
+│   ├── main.py                      # Full-featured example FastAPI app
+│   ├── private.pem, public.pem      # Generated RSA keys (rsa-hybrid)
+│   ├── ec_private.pem, ec_public.pem        # Generated EC keys (ecdh-aes-gcm, ecies)
+│   └── hpke_private.pem, hpke_public.pem    # Generated X25519 keys (hpke)
 │
 ├── tests/                           # pytest suite
 │   ├── test_handlers.py             # Handler encode/decode roundtrip tests
@@ -68,24 +74,22 @@ pip install -r requirements.txt
 
 ### Option 1: Run Example Application
 ```bash
-python examples/example_app.py
+cd examples
+python -m uvicorn main:app --reload
 ```
 
-Then in another terminal, run the test client:
-```bash
-python examples/test_client.py
-```
+The console prints ready-to-paste Postman requests (URL + JSON body) for
+every built-in handler on startup.
 
 ### Option 2: Manual Testing with cURL
 ```bash
 # Terminal 1: Start server
-python examples/example_app.py
+cd examples
+python -m uvicorn main:app --reload
 
-# Terminal 2: Test endpoints
-curl http://localhost:8000/api/public/users
-curl -X POST http://localhost:8000/api/login \
-  -H "Content-Type: application/json" \
-  -d '{"encrypted":"eyJ1c2VybmFtZSI6ICJhZG1pbiIsICJwYXNzd29yZCI6ICJwYXNzd29yZDEyMyJ9"}'
+# Terminal 2: Test endpoints (see the Postman examples printed on startup)
+curl http://localhost:8000/health
+curl http://localhost:8000/base
 ```
 
 ### Option 3: Run the pytest Suite

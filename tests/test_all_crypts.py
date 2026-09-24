@@ -1,12 +1,14 @@
 """
-Automated pass/fail report across every built-in encryption handler.
+Automated pass/fail report across every built-in encryption handler,
+exercised through examples/main.py's demo routes.
 
-For each crypt type ("base64", "fernet", "aes-gcm-256", "rsa-hybrid"):
-  1. Fixed-data check: GET /api/{type}/fixed with a blank request and
-     confirm the decrypted response matches the server's known FIXED_DATA.
+For each crypt type ("base64", "fernet", "aes-gcm-256", "chacha20-poly1305",
+"rsa-hybrid", "ecdh-aes-gcm", "ecies", "hpke"):
+  1. Fixed-data check: GET /{prefix} with a blank request and confirm the
+     decrypted response matches the server's known FIXED_DATA.
   2. Echo check: encrypt a second, different payload, POST it to
-     /api/{type}/echo, and confirm the decrypted response matches what
-     was sent.
+     /{prefix}/cry, and confirm the decrypted response matches what was
+     sent.
 
 Prints a pass/fail percentage summary and asserts a 100% pass rate.
 """
@@ -19,20 +21,19 @@ from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "examples"))
 
-from example_app import (  # noqa: E402
-    ALL_CRYPT_TYPES,
-    FIXED_DATA,
-    _RSA_PRIVATE_PEM,
-    _RSA_PUBLIC_PEM,
-    _SYMMETRIC_KEY,
-    app,
-)
+from main import ALL_CRYPT_TYPES, ROUTE_PREFIX, app  # noqa: E402
 from fastapi_payloadshield import get_handler  # noqa: E402
 from fastapi_payloadshield import PayloadShieldEnc  # noqa: E402
 
+FIXED_DATA = {"message": "Hello, PayloadShield!"}
 SECOND_DATA = {"user": "alice", "roles": ["admin", "editor"], "active": True}
 
 client = TestClient(app)
+
+# Snapshot the fully-resolved key config main.py set up at import time, so
+# other test modules calling PayloadShieldEnc.init(...) during the run can't
+# leave this module's routes and test config out of sync.
+_CONFIG_SNAPSHOT = dict(PayloadShieldEnc.get_config())
 
 
 @pytest.fixture(autouse=True)
@@ -43,20 +44,12 @@ def _reset_global_key_config():
     before every test so route handlers (which read the global config) stay
     in sync with the config used to encrypt/decrypt in the test itself.
     """
-    PayloadShieldEnc.init({
-        "Key": _SYMMETRIC_KEY,
-        "PublicKey": _RSA_PUBLIC_PEM,
-        "PrivateKey": _RSA_PRIVATE_PEM,
-    })
+    PayloadShieldEnc.init(_CONFIG_SNAPSHOT)
     yield
 
 
 def _config_for(crypt_type: str) -> dict:
-    return {
-        "Key": _SYMMETRIC_KEY,
-        "PublicKey": _RSA_PUBLIC_PEM,
-        "PrivateKey": _RSA_PRIVATE_PEM,
-    }
+    return _CONFIG_SNAPSHOT
 
 
 def _run_all_checks() -> list:
@@ -66,10 +59,11 @@ def _run_all_checks() -> list:
     for crypt_type in ALL_CRYPT_TYPES:
         handler = get_handler(crypt_type)
         config = _config_for(crypt_type)
+        prefix = ROUTE_PREFIX[crypt_type]
 
         # Check 1: blank request -> server returns FIXED_DATA encrypted.
         try:
-            response = client.get(f"/api/{crypt_type}/fixed")
+            response = client.get(f"/{prefix}")
             decrypted = handler.decode(response.json()["encrypted"], config)
             passed = decrypted == FIXED_DATA
             detail = "" if passed else f"expected {FIXED_DATA}, got {decrypted}"
@@ -82,7 +76,7 @@ def _run_all_checks() -> list:
         try:
             encrypted_request = handler.encode(SECOND_DATA, config)
             response = client.post(
-                f"/api/{crypt_type}/echo",
+                f"/{prefix}/cry",
                 json={"encrypted": encrypted_request},
             )
             decrypted = handler.decode(response.json()["encrypted"], config)
@@ -126,22 +120,22 @@ def test_all_crypt_types_pass_rate():
     assert percentage == 100.0
 
 
-@pytest.mark.parametrize("crypt_type", ["base64", "fernet", "aes-gcm-256", "rsa-hybrid"])
+@pytest.mark.parametrize("crypt_type", ALL_CRYPT_TYPES)
 def test_fixed_data_matches_for_each_crypt_type(crypt_type):
     handler = get_handler(crypt_type)
     config = _config_for(crypt_type)
-    response = client.get(f"/api/{crypt_type}/fixed")
+    response = client.get(f"/{ROUTE_PREFIX[crypt_type]}")
     assert response.status_code == 200
     decrypted = handler.decode(response.json()["encrypted"], config)
     assert decrypted == FIXED_DATA
 
 
-@pytest.mark.parametrize("crypt_type", ["base64", "fernet", "aes-gcm-256", "rsa-hybrid"])
+@pytest.mark.parametrize("crypt_type", ALL_CRYPT_TYPES)
 def test_echo_round_trip_for_each_crypt_type(crypt_type):
     handler = get_handler(crypt_type)
     config = _config_for(crypt_type)
     encrypted_request = handler.encode(SECOND_DATA, config)
-    response = client.post(f"/api/{crypt_type}/echo", json={"encrypted": encrypted_request})
+    response = client.post(f"/{ROUTE_PREFIX[crypt_type]}/cry", json={"encrypted": encrypted_request})
     assert response.status_code == 200
     decrypted = handler.decode(response.json()["encrypted"], config)
     assert decrypted == SECOND_DATA

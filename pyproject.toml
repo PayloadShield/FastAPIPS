@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastapi_payloadshield"
-version = "1.2.1.1"
+version = "1.2.3"
 description = "Pluggable FastAPI decorators for encrypting/decrypting request and response payloads"
 readme = "README.md"
 requires-python = ">=3.7"

@@ -1,6 +1,7 @@
 """
 Crypto utilities with pluggable encryption handlers.
-Supports multiple encryption types: base64, fernet, aes-gcm-256, rsa-hybrid.
+Supports multiple encryption types: base64, fernet, aes-gcm-256,
+chacha20-poly1305, rsa-hybrid, ecdh-aes-gcm, ecies, hpke.
 """
 
 from .EncryptionHandler import EncryptionHandler
@@ -9,6 +10,9 @@ from .FernetEncryptionHandler import FernetEncryptionHandler
 from .AESGCM256EncryptionHandler import AESGCM256EncryptionHandler
 from .HybridRSAEncryptionHandler import HybridRSAEncryptionHandler
 from .ChaChaEncryptionHandler import ChaChaEncryptionHandler
+from .ECDHAESGCMEncryptionHandler import ECDHAESGCMEncryptionHandler
+from .ECIESEncryptionHandler import ECIESEncryptionHandler
+from .HPKEEncryptionHandler import HPKEEncryptionHandler
 
 # ============================================================================
 # Handler Registry & Factory
@@ -20,6 +24,9 @@ _HANDLERS = {
     "aes-gcm-256": AESGCM256EncryptionHandler(),
     "rsa-hybrid": HybridRSAEncryptionHandler(),
     "chacha20-poly1305": ChaChaEncryptionHandler(),
+    "ecdh-aes-gcm": ECDHAESGCMEncryptionHandler(),
+    "ecies": ECIESEncryptionHandler(),
+    "hpke": HPKEEncryptionHandler(),
 }
 
 
