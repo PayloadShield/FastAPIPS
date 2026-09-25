@@ -6,18 +6,9 @@
 FastAPIPS/
 ├── fastapi_payloadshield/           # Main package directory
 │   ├── __init__.py                  # Package initialization & exports
-│   ├── config.py                    # PayloadShieldEnc key configuration
+│   ├── config.py                    # ComPyPS configuration re-export
 │   ├── decorators.py                # PayloadShield.encrypt/decrypt/crypt decorators
-│   ├── crypto.py                    # Handler registry (register_handler/get_handler)
-│   ├── EncryptionHandler.py         # Abstract handler interface
-│   ├── Base64EncryptionHandler.py   # base64 handler
-│   ├── FernetEncryptionHandler.py   # fernet handler
-│   ├── AESGCM256EncryptionHandler.py# aes-gcm-256 handler
-│   ├── ChaChaEncryptionHandler.py   # chacha20-poly1305 handler
-│   ├── HybridRSAEncryptionHandler.py# rsa-hybrid handler
-│   ├── ECDHAESGCMEncryptionHandler.py# ecdh-aes-gcm handler
-│   ├── ECIESEncryptionHandler.py    # ecies handler
-│   └── HPKEEncryptionHandler.py     # hpke handler
+│   └── crypto.py                    # ComPyPS handler registry re-export
 │
 ├── examples/                        # Example implementations
 │   ├── main.py                      # Full-featured example FastAPI app
@@ -106,11 +97,12 @@ day-to-day development workflows.
 
 ## Adding a New Built-in Handler
 
-1. Create `fastapi_payloadshield/MyHandler.py` implementing
+1. Create `compyps/MyHandler.py` implementing
    `EncryptionHandler.encode(data, config)` / `.decode(encoded_data, config)`.
-2. Register it in `fastapi_payloadshield/crypto.py`'s `_HANDLERS` dict.
-3. Export the class from `fastapi_payloadshield/__init__.py`.
-4. Add a roundtrip test in `tests/test_handlers.py`.
+2. Register it in `compyps/crypto.py`'s `_HANDLERS` dict and export it from
+   `compyps/__init__.py`.
+3. Add a roundtrip test in `ComPyPS/tests/test_handlers.py`.
+4. FastAPIPS automatically receives the handler through `compyps`.
 
 ## Publishing to PyPI
 

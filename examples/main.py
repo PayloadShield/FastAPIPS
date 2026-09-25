@@ -18,6 +18,7 @@ Test with Postman:
 """
 
 import json
+from importlib.metadata import version
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -27,6 +28,8 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa, x25519
 from fastapi_payloadshield import PayloadShield, PayloadShieldEnc, get_handler
 
 BASE_DIR = Path(__file__).resolve().parent
+COMPYPS_VERSION = version("compyps")
+FASTAPIPS_VERSION = version("fastapi_payloadshield")
 
 app = FastAPI(
     title="My FastAPI Project",
@@ -107,7 +110,9 @@ PayloadShieldEnc.init({
 @PayloadShield.encrypt("base64")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/base/dec")
@@ -125,7 +130,9 @@ def decrypt_payload(data: dict):
 @PayloadShield.encrypt("aes-gcm-256")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/aes/dec")
@@ -143,7 +150,9 @@ def decrypt_payload(data: dict):
 @PayloadShield.encrypt("fernet")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/fernet/dec")
@@ -160,7 +169,9 @@ def decrypt_payload(data: dict):
 @PayloadShield.encrypt("rsa-hybrid")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/rsa/dec")
@@ -177,7 +188,9 @@ def decrypt_payload(data: dict):
 @PayloadShield.encrypt("chacha20-poly1305")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/chacha/dec")
@@ -194,7 +207,9 @@ def decrypt_payload(data: dict):
 @PayloadShield.encrypt("ecdh-aes-gcm")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/ecdh/dec")
@@ -211,7 +226,9 @@ def decrypt_payload(data: dict):
 @PayloadShield.encrypt("ecies")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/ecies/dec")
@@ -228,7 +245,9 @@ def decrypt_payload(data: dict):
 @PayloadShield.encrypt("hpke")
 def root():
     return {
-        "message": "Hello, PayloadShield!"
+        "message": "Hello, PayloadShield!",
+        "ComPyPS": COMPYPS_VERSION,
+        "FastAPIPS": FASTAPIPS_VERSION,
     }
 
 @app.post("/hpke/dec")
